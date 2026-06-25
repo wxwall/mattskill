@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 1 课：为什么 AI Agent 看不懂你的代码？</title>
+</head>
+<body style="font-family:'Inter','Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;font-size:17px;line-height:1.7;color:#1a1a2e;background:#fafbfc;background-image:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(79,70,229,.03) 0%,transparent 100%);min-height:100vh;margin:0;padding:0;-webkit-font-smoothing:antialiased">
+
+<div style="max-width:760px;margin:0 auto;padding:2.5rem 1.5rem 5rem">
+
+<!-- Header -->
+<div style="margin-bottom:2rem">
+  <div style="display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:600;color:#4f46e5;background:#eef2ff;padding:.3rem .75rem;border-radius:100px;margin-bottom:.8rem;letter-spacing:.02em">
+    <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4f46e5;margin-right:.25rem"></span>
+    第 1 课 · 入门
+  </div>
+  <h1 style="font-size:2rem;font-weight:700;letter-spacing:-.03em;line-height:1.25;margin:0 0 .4rem 0;background:linear-gradient(135deg,#1a1a2e 0%,#3d3b5c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">为什么 AI Agent 看不懂你的代码？</h1>
+  <div style="display:flex;gap:1rem;font-size:.85rem;color:#8b8fa3;flex-wrap:wrap">
+    <span>📚 课程 0001</span>
+    <span>⏱ 预计 15 分钟</span>
+  </div>
+</div>
+
+<!-- ====== SECTION 1: The Problem ====== -->
+<h2 style="font-size:1.3rem;font-weight:650;margin:2rem 0 .5rem;letter-spacing:-.015em;color:#1a1a2e">1. 一个日常场景</h2>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+假设你正在用 <strong style="font-weight:650;color:#1a1a2e">Claude Code</strong> 开发一个 NestJS 后端项目。你在某个 Controller 里看到了一个请求入口，你想知道：
+</p>
+
+<p style="margin:.8rem 0;color:#5a5d6e;font-size:1.05rem;text-align:center;padding:.8rem;background:#fff;border:1px solid #e5e7eb;border-radius:8px;font-weight:650">
+  "这个 POST /users 请求是怎么一路到达数据库的？"
+</p>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+看起来是个简单的问题。但 Agent 需要追踪的路径是：
+</p>
+
+<div style="display:flex;flex-direction:column;align-items:center;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1.4rem 1rem;margin:1rem 0;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+
+  <div style="font-weight:650;font-size:.9rem;color:#1a1a2e;background:#eef2ff;padding:.45rem .9rem;border-radius:100px;margin-bottom:.3rem">👤 "POST /users 怎么到数据库的？"</div>
+
+  <div style="font-size:.95rem;color:#8b8fa3;line-height:1;padding:.1rem 0">↓</div>
+
+  <div style="display:flex;align-items:center;gap:.55rem;padding:.4rem .8rem;border-radius:6px;border:1.5px solid #fecaca;background:#fef2f2;min-width:290px;font-size:.84rem;margin:.1rem 0">
+    <span style="font-size:.95rem;flex-shrink:0">🔧</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;color:#1a1a2e">grep("createUser")</span>
+    <span style="margin-left:auto;font-size:.78rem;color:#8b8fa3">→ 47 个匹配</span>
+  </div>
+  <div style="font-size:.95rem;color:#8b8fa3;line-height:1;padding:.1rem 0">↓</div>
+  <div style="display:flex;align-items:center;gap:.55rem;padding:.4rem .8rem;border-radius:6px;border:1.5px solid #fecaca;background:#fef2f2;min-width:290px;font-size:.84rem;margin:.1rem 0">
+    <span style="font-size:.95rem;flex-shrink:0">📄</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;color:#1a1a2e">Read(user.controller.ts)</span>
+    <span style="margin-left:auto;font-size:.78rem;color:#8b8fa3">→ 220 行</span>
+  </div>
+  <div style="font-size:.95rem;color:#8b8fa3;line-height:1;padding:.1rem 0">↓</div>
+  <div style="display:flex;align-items:center;gap:.55rem;padding:.4rem .8rem;border-radius:6px;border:1.5px solid #fecaca;background:#fef2f2;min-width:290px;font-size:.84rem;margin:.1rem 0">
+    <span style="font-size:.95rem;flex-shrink:0">📄</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;color:#1a1a2e">Read(user.service.ts)</span>
+    <span style="margin-left:auto;font-size:.78rem;color:#8b8fa3">→ 310 行</span>
+  </div>
+  <div style="font-size:.95rem;color:#8b8fa3;line-height:1;padding:.1rem 0">↓</div>
+  <div style="display:flex;align-items:center;gap:.55rem;padding:.4rem .8rem;border-radius:6px;border:1.5px solid #fecaca;background:#fef2f2;min-width:290px;font-size:.84rem;margin:.1rem 0">
+    <span style="font-size:.95rem;flex-shrink:0">📄</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;color:#1a1a2e">Read(user.repository.ts)</span>
+    <span style="margin-left:auto;font-size:.78rem;color:#8b8fa3">→ 180 行</span>
+  </div>
+  <div style="font-size:.95rem;color:#8b8fa3;line-height:1;padding:.1rem 0">↓</div>
+  <div style="display:flex;align-items:center;gap:.55rem;padding:.4rem .8rem;border-radius:6px;border:1.5px solid #fecaca;background:#fef2f2;min-width:290px;font-size:.84rem;margin:.1rem 0">
+    <span style="font-size:.95rem;flex-shrink:0">📄</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;color:#1a1a2e">Read(user.entity.ts)</span>
+    <span style="margin-left:auto;font-size:.78rem;color:#8b8fa3">→ 90 行</span>
+  </div>
+  <div style="font-size:.95rem;color:#8b8fa3;line-height:1;padding:.1rem 0">↓</div>
+  <div style="font-size:.82rem;color:#8b8fa3;padding:.25rem 0">… 还要查 TypeORM 装饰器、Module 导入、中间件链 …</div>
+  <div style="font-size:.95rem;color:#8b8fa3;line-height:1;padding:.1rem 0">↓</div>
+  <div style="display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.3rem">
+    <div style="font-size:.8rem;font-weight:600;padding:.3rem .65rem;border-radius:100px;background:#fef2f2;color:#dc2626">🔧 12 次工具调用</div>
+    <div style="font-size:.8rem;font-weight:600;padding:.3rem .65rem;border-radius:100px;background:#fef2f2;color:#dc2626">🔄 6 次 API 往返</div>
+    <div style="font-size:.8rem;font-weight:600;padding:.3rem .65rem;border-radius:100px;background:#fef2f2;color:#dc2626">📊 ~8,000 tokens</div>
+    <div style="font-size:.8rem;font-weight:600;padding:.3rem .65rem;border-radius:100px;background:#fffbeb;color:#d97706">💡 有用信息 ~200 tokens</div>
+  </div>
+</div>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+<strong style="font-weight:650;color:#1a1a2e">每一次"Read"都是一次完整的网络往返。</strong> 如果你用过 Claude Code，你一定见过这个模式——Agent 读取一个文件，发现里面引用了另一个模块，再读取那个模块，再发现引用，再读取……像在迷宫里摸索。这些 token 被消耗在<strong style="font-weight:650;color:#1a1a2e">"发现代码长什么样"</strong>上，而不是<strong style="font-weight:650;color:#1a1a2e">"理解业务逻辑"</strong>上。
+</p>
+
+<!-- ====== SECTION 2: Why Grep Is Not Enough ====== -->
+<h2 style="font-size:1.3rem;font-weight:650;margin:2rem 0 .5rem;letter-spacing:-.015em;color:#1a1a2e">2. 为什么 grep 根本不够用？</h2>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+很多人会说："那让 Agent 多 grep 几次不就行了？" 问题在于，<strong style="font-weight:650;color:#1a1a2e">grep 只能做字符串匹配，它完全不理解代码语义</strong>。下面四种常见场景，grep 全都抓瞎：
+</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.6rem;margin:1rem 0">
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:.82rem;font-weight:700;color:#dc2626;margin-bottom:.4rem">🔀 动态分发</div>
+    <p style="margin:0;font-size:.86rem;color:#5a5d6e">
+      接口方法调用在编译期不知道具体实现类。比如 <code style="font-family:'JetBrains Mono',monospace;font-size:.82rem;background:#eef2ff;color:#4338ca;padding:.12em .45em;border-radius:4px">handler.handle(req)</code>——grep 搜 "handle" 找不到它实际调的是哪个实现。
+      多态、依赖注入、策略模式都会让 grep 失效。
+    </p>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:.82rem;font-weight:700;color:#dc2626;margin-bottom:.4rem">🗺️ 框架路由</div>
+    <p style="margin:0;font-size:.86rem;color:#5a5d6e">
+      NestJS 的 <code style="font-family:'JetBrains Mono',monospace;font-size:.82rem;background:#eef2ff;color:#4338ca;padding:.12em .45em;border-radius:4px">@Post('users')</code> 装饰器定义了 URL → Controller 方法的映射。grep 搜 "/users" 找不到这个关系——因为 URL 路径是通过框架约定拼接的。
+    </p>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:.82rem;font-weight:700;color:#dc2626;margin-bottom:.4rem">📦 再导出链</div>
+    <p style="margin:0;font-size:.86rem;color:#5a5d6e">
+      模块 A 从模块 B 导入，B 又从 C 再导出。grep 搜函数名只搜到 B 的再导出语句，找不到 C 里的原始定义。跨多个 barrel 文件的跟踪对 grep 是噩梦。
+    </p>
+  </div>
+
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:.82rem;font-weight:700;color:#dc2626;margin-bottom:.4rem">🌐 跨语言桥接</div>
+    <p style="margin:0;font-size:.86rem;color:#5a5d6e">
+      React Native 项目中 JavaScript 调用原生模块，Swift 调用 ObjC——grep 只能搜索一种语言的字符串，跨越语言边界的调用关系完全不可见。
+    </p>
+  </div>
+
+</div>
+
+<div style="background:#fff;border:1px solid #e5e7eb;border-left:4px solid #4f46e5;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+  <div style="font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4f46e5;margin-bottom:.2rem">核心问题</div>
+  <p style="margin:0;font-size:.92rem;color:#5a5d6e">
+    grep 给你<strong style="font-weight:650;color:#1a1a2e">一堆匹配的字符串位置</strong>，AI Agent 真正需要的是<strong style="font-weight:650;color:#1a1a2e">一张可遍历的关系图</strong>。从这个函数能走到哪些函数？改了这里会影响哪里？谁调用了这个接口？——这些都是图查询，不是文本搜索。
+  </p>
+</div>
+
+<!-- ====== SECTION 3: Structure Discovery Overhead ====== -->
+<h2 style="font-size:1.3rem;font-weight:650;margin:2rem 0 .5rem;letter-spacing:-.015em;color:#1a1a2e">3. Structure Discovery Overhead（结构发现开销）</h2>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+这个问题有个正式的名字：<strong style="font-weight:650;color:#1a1a2e">Structure Discovery Overhead</strong>——Agent 在每次查询时都从零开始，重新发现代码的拓扑结构。
+</p>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+具体来说，Agent 每次都在重复回答这些问题：
+</p>
+
+<ul style="margin:.5rem 0 .5rem 1.5rem;color:#5a5d6e;list-style-type:disc">
+  <li style="margin:.4rem 0">这个文件里有哪些函数和类？</li>
+  <li style="margin:.4rem 0">这个函数调用了哪些其他函数？</li>
+  <li style="margin:.4rem 0">这个类继承了谁？实现了哪些接口？</li>
+  <li style="margin:.4rem 0">这个 URL 路由注册在哪个文件里？</li>
+  <li style="margin:.4rem 0">改了这里，哪些文件会受影响？</li>
+</ul>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+这些信息<strong style="font-weight:650;color:#1a1a2e">在不同查询之间几乎不变</strong>——你的代码在你写完之后，调用关系就确定了。但 Agent 每次都要重新发现一遍。你每问一个问题，它就要重新 grep、重新 read、重新在脑子里重建图谱。
+</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem;margin:1.2rem 0">
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:1.8rem;font-weight:700;color:#dc2626;margin-bottom:.2rem">58%</div>
+    <div style="font-size:.82rem;color:#8b8fa3">平均更多工具调用</div>
+    <div style="font-size:.74rem;color:#a8a8b8;margin-top:.15rem">不使用 CodeGraph 时</div>
+  </div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:1.8rem;font-weight:700;color:#dc2626;margin-bottom:.2rem">22%</div>
+    <div style="font-size:.82rem;color:#8b8fa3">平均响应更慢</div>
+    <div style="font-size:.74rem;color:#a8a8b8;margin-top:.15rem">7 个真实代码库基准测试</div>
+  </div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:1.8rem;font-weight:700;color:#dc2626;margin-bottom:.2rem">23-64%</div>
+    <div style="font-size:.82rem;color:#8b8fa3">更多 Token 消耗</div>
+    <div style="font-size:.74rem;color:#a8a8b8;margin-top:.15rem">取决于代码库规模</div>
+  </div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:1.8rem;font-weight:700;color:#dc2626;margin-bottom:.2rem">~100%</div>
+    <div style="font-size:.82rem;color:#8b8fa3">文件读取全是额外开销</div>
+    <div style="font-size:.74rem;color:#a8a8b8;margin-top:.15rem">只为了"看看里面有什么"</div>
+  </div>
+</div>
+
+<div style="background:#fff;border:1px solid #e5e7eb;border-left:4px solid #d97706;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin:1.2rem 0;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+  <div style="font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#d97706;margin-bottom:.2rem">🏆 极端案例：Tokio（Rust 异步运行时）</div>
+  <p style="margin:0;font-size:.92rem;color:#5a5d6e">
+    在 Tokio 这个大型 Rust 代码库中，<strong style="font-weight:650;color:#1a1a2e">工具调用减少了 92%</strong>，响应速度提升了 <strong style="font-weight:650;color:#1a1a2e">71%</strong>。grep → read 循环几乎被完全消除，因为所有结构信息都已经在图里了。
+  </p>
+</div>
+
+<!-- ====== SECTION 4: Analogy ====== -->
+<h2 style="font-size:1.3rem;font-weight:650;margin:2rem 0 .5rem;letter-spacing:-.015em;color:#1a1a2e">4. 图书馆的比喻</h2>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+图书馆的目录系统是一个很好的类比——它完整地表达了我们面临的问题和解决方案：
+</p>
+
+<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:.5rem;margin:1.2rem 0;align-items:start">
+  <div style="border-radius:10px;border:1.5px solid #fecaca;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-weight:650;font-size:.82rem;padding:.5rem .7rem;text-align:center;background:#fef2f2;color:#dc2626">❌ 没有卡片目录</div>
+    <div style="padding:.8rem;font-size:.84rem;line-height:1.8;text-align:center;color:#5a5d6e;background:#fff">
+      每次想找一本书<br>
+      → 从头到尾扫描所有书架<br>
+      → 拿起每一本书翻一翻<br>
+      → 看看是不是你要的<br><br>
+      <strong style="font-weight:650;color:#dc2626">找一本书要 30 分钟</strong><br>
+      <span style="font-size:.8rem;color:#8b8fa3">无论你来过这个图书馆多少次</span>
+    </div>
+  </div>
+  <div style="font-weight:700;font-size:.82rem;color:#8b8fa3;display:flex;align-items:center;padding:0 .25rem">VS</div>
+  <div style="border-radius:10px;border:1.5px solid #a7f3d0;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-weight:650;font-size:.82rem;padding:.5rem .7rem;text-align:center;background:#ecfdf5;color:#059669">✅ 有卡片目录</div>
+    <div style="padding:.8rem;font-size:.84rem;line-height:1.8;text-align:center;color:#5a5d6e;background:#fff">
+      查卡片目录找到位置<br>
+      → 记下书架编号<br>
+      → 径直走过去拿书<br>
+      → 一步到位<br><br>
+      <strong style="font-weight:650;color:#059669">找一本书要 30 秒</strong><br>
+      <span style="font-size:.8rem;color:#8b8fa3">因为结构信息已经建好了</span>
+    </div>
+  </div>
+</div>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+这个类比的关键点在于：<strong style="font-weight:650;color:#1a1a2e">目录系统是一次建好、反复使用的</strong>。图书馆不是你每次进门才给书分类——分类在你进门之前就做好了。CodeGraph 做的事情完全一样：在你开始提问之前，把代码的"卡片目录"建好。
+</p>
+
+<!-- ====== SECTION 5: What CodeGraph Is ====== -->
+<h2 style="font-size:1.3rem;font-weight:650;margin:2rem 0 .5rem;letter-spacing:-.015em;color:#1a1a2e">5. CodeGraph 就是那张卡片目录</h2>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+CodeGraph 是一个<strong style="font-weight:650;color:#1a1a2e">预索引的代码知识图谱</strong>。它读取你的代码库，提取所有函数、类、方法、接口，以及它们之间的关系（调用、继承、导入、路由），存进一个本地图数据库。Agent 查询时，不需要 grep → read 循环，而是直接在图上查询，一次调用返回完整的调用链和相关源码。
+</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.6rem;margin:1rem 0">
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#4f46e5;margin-bottom:.3rem">🔵 Node（节点）</div>
+    <p style="margin:0;font-size:.86rem;color:#5a5d6e">函数、类、方法、接口、常量、路由处理器、Vuex mutation、Pinia store——每一个<strong style="font-weight:650;color:#1a1a2e">可识别的代码实体</strong>。</p>
+  </div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#4f46e5;margin-bottom:.3rem">➡️ Edge（边）</div>
+    <p style="margin:0;font-size:.86rem;color:#5a5d6e">调用、导入、继承、实现、路由映射、跨语言桥接——<strong style="font-weight:650;color:#1a1a2e">节点之间的关系</strong>。</p>
+  </div>
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#4f46e5;margin-bottom:.3rem">🗂️ Graph（图）</div>
+    <p style="margin:0;font-size:.86rem;color:#5a5d6e">节点 + 边的<strong style="font-weight:650;color:#1a1a2e">整体拓扑结构</strong>。不是列表，不是表格，是一个可遍历的有向图。</p>
+  </div>
+</div>
+
+<p style="margin:.8rem 0;color:#5a5d6e">
+有了这张图，Agent 的问题变了：
+</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1rem 0">
+  <div style="border-radius:10px;border:1.5px solid #fecaca;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-weight:650;font-size:.8rem;padding:.5rem .7rem;text-align:center;background:#fef2f2;color:#dc2626">❌ 没有 CodeGraph</div>
+    <div style="padding:.8rem;font-size:.82rem;line-height:1.7;color:#5a5d6e;background:#fff">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#1a1a2e">grep("createUser")</span><br>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#1a1a2e">Read(controller.ts)</span><br>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#1a1a2e">Read(service.ts)</span><br>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#1a1a2e">Read(repository.ts)</span><br>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#1a1a2e">Read(entity.ts)</span><br>
+      … 12+ 次调用，6 次往返<br>
+      <strong style="font-weight:650;color:#dc2626">~8,000 tokens，15 秒</strong>
+    </div>
+  </div>
+  <div style="border-radius:10px;border:1.5px solid #a7f3d0;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+    <div style="font-weight:650;font-size:.8rem;padding:.5rem .7rem;text-align:center;background:#ecfdf5;color:#059669">✅ 使用 CodeGraph</div>
+    <div style="padding:.8rem;font-size:.82rem;line-height:1.7;color:#5a5d6e;background:#fff">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#1a1a2e">codegraph_explore(</span><br>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#1a1a2e">&nbsp;&nbsp;"POST /users 怎么到数据库"</span><br>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;color:#1a1a2e">)</span><br>
+      → Controller → Service → Repository → Entity<br>
+      → 完整调用链 + 相关源码<br>
+      <strong style="font-weight:650;color:#059669">1 次调用，精准 context</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SECTION 6: What CodeGraph Is NOT ====== -->
+<h2 style="font-size:1.3rem;font-weight:650;margin:2rem 0 .5rem;letter-spacing:-.015em;color:#1a1a2e">6. CodeGraph 不是什么</h2>
+
+<p style="margin:.8rem 0;color:#5a5d6e">理解一个工具是什么很重要，理解它<strong style="font-weight:650;color:#1a1a2e">不是什么</strong>同样重要：</p>
+
+<div style="overflow-x:auto;margin:1rem 0;border-radius:10px;border:1px solid #e5e7eb;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+  <table style="width:100%;border-collapse:collapse;font-size:.88rem">
+    <tr>
+      <td style="padding:.7rem 1rem;border-bottom:1px solid #e5e7eb;color:#dc2626;font-weight:650;background:#fef2f2;width:30%">❌ 代码搜索引擎</td>
+      <td style="padding:.7rem 1rem;border-bottom:1px solid #e5e7eb;color:#5a5d6e">它是<strong style="font-weight:650;color:#1a1a2e">结构图</strong>，不只是文本索引。它理解调用关系、继承链、框架路由，而不是简单的关键词匹配。</td>
+    </tr>
+    <tr>
+      <td style="padding:.7rem 1rem;border-bottom:1px solid #e5e7eb;color:#dc2626;font-weight:650;background:#fef2f2">❌ 云端服务</td>
+      <td style="padding:.7rem 1rem;border-bottom:1px solid #e5e7eb;color:#5a5d6e"><strong style="font-weight:650;color:#1a1a2e">100% 本地运行</strong>，数据从不离开你的机器。没有云上传、不需要 API Key、不依赖任何外部服务。代码留在硬盘上，索引也留在硬盘上。</td>
+    </tr>
+    <tr>
+      <td style="padding:.7rem 1rem;border-bottom:1px solid #e5e7eb;color:#dc2626;font-weight:650;background:#fef2f2">❌ 静态分析工具</td>
+      <td style="padding:.7rem 1rem;border-bottom:1px solid #e5e7eb;color:#5a5d6e">不检查 bug，不替代 ESLint 或 Sonar。<strong style="font-weight:650;color:#1a1a2e">它的目标是提供上下文，不是找问题</strong>。它告诉你"结构是这样的"，而不是"结构有问题"。</td>
+    </tr>
+    <tr>
+      <td style="padding:.7rem 1rem;color:#dc2626;font-weight:650;background:#fef2f2">❌ 替代 AI 推理</td>
+      <td style="padding:.7rem 1rem;color:#5a5d6e">推理仍然是 Claude 等 AI 模型完成。CodeGraph <strong style="font-weight:650;color:#1a1a2e">提供精准的 context</strong>，减少 Agent 在"发现"上的开销，让它更多精力用在"思考"上。分工很明确：CodeGraph 管"代码在哪里"，Agent 管"代码怎么办"。</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ====== QUIZ ====== -->
+<h2 style="font-size:1.3rem;font-weight:650;margin:2rem 0 .8rem;letter-spacing:-.015em;color:#1a1a2e">小测验</h2>
+<p style="margin:.5rem 0 .8rem;font-size:.84rem;color:#8b8fa3">👆 点击每个选项的灰色区域查看对错</p>
+
+<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.4rem;margin:1rem 0;box-shadow:0 4px 12px rgba(0,0,0,.06)">
+  <div style="font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4f46e5;margin-bottom:.3rem">问题 1</div>
+  <p style="font-weight:650;font-size:1rem;margin:.3rem 0 1rem;color:#1a1a2e">"Structure Discovery Overhead" 指的是什么？</p>
+
+  <svg viewBox="0 0 620 72" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:6px">
+    <rect x="3" y="3" width="614" height="66" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+    <text x="14" y="26" font-size="14" fill="#1a1a2e" font-family="sans-serif">A. 代码编译时需要发现类型错误的过程</text>
+    <text x="14" y="50" font-size="13" fill="#dc2626" font-family="sans-serif" font-weight="600">✗ 不对。这是编译器的职责，跟 AI Agent 理解代码结构是两回事。</text>
+    <g><animate attributeName="opacity" from="1" to="0" begin="click" dur="0.25s" fill="freeze" restart="never"/>
+      <rect x="3" y="34" width="614" height="35" fill="#f9fafb"/><rect x="3" y="65" width="614" height="4" fill="#f9fafb"/>
+      <text x="310" y="56" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">👆 点击查看对错</text></g>
+  </svg>
+
+  <svg viewBox="0 0 620 85" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:6px">
+    <rect x="3" y="3" width="614" height="79" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+    <text x="14" y="26" font-size="14" fill="#1a1a2e" font-family="sans-serif">B. AI Agent 每次查询都要重新用 grep/read 发现代码结构的浪费</text>
+    <text x="14" y="48" font-size="13" fill="#059669" font-family="sans-serif" font-weight="600">✓ 正确！Agent 每次都从零开始用 grep / glob / read 探索代码</text>
+    <text x="14" y="66" font-size="13" fill="#059669" font-family="sans-serif" font-weight="600">拓扑结构，大量 token 被浪费在"发现"而非"理解"上。</text>
+    <g><animate attributeName="opacity" from="1" to="0" begin="click" dur="0.25s" fill="freeze" restart="never"/>
+      <rect x="3" y="34" width="614" height="48" fill="#f9fafb"/><rect x="3" y="78" width="614" height="4" fill="#f9fafb"/>
+      <text x="310" y="62" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">👆 点击查看对错</text></g>
+  </svg>
+
+  <svg viewBox="0 0 620 85" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:6px">
+    <rect x="3" y="3" width="614" height="79" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+    <text x="14" y="26" font-size="14" fill="#1a1a2e" font-family="sans-serif">C. 开发者在大型代码库中找到正确文件很困难</text>
+    <text x="14" y="48" font-size="13" fill="#dc2626" font-family="sans-serif" font-weight="600">✗ 这是开发者体验问题，但 "Structure Discovery Overhead"</text>
+    <text x="14" y="66" font-size="13" fill="#dc2626" font-family="sans-serif" font-weight="600">专指 AI Agent 与代码库交互时的重复发现开销。</text>
+    <g><animate attributeName="opacity" from="1" to="0" begin="click" dur="0.25s" fill="freeze" restart="never"/>
+      <rect x="3" y="34" width="614" height="48" fill="#f9fafb"/><rect x="3" y="78" width="614" height="4" fill="#f9fafb"/>
+      <text x="310" y="62" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">👆 点击查看对错</text></g>
+  </svg>
+
+  <svg viewBox="0 0 620 72" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:6px">
+    <rect x="3" y="3" width="614" height="66" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+    <text x="14" y="26" font-size="14" fill="#1a1a2e" font-family="sans-serif">D. CI/CD 流水线中分析代码变更影响范围的过程</text>
+    <text x="14" y="50" font-size="13" fill="#dc2626" font-family="sans-serif" font-weight="600">✗ CI/CD 影响分析是另一个领域，这里讨论的是 Agent 与代码库交互的效率。</text>
+    <g><animate attributeName="opacity" from="1" to="0" begin="click" dur="0.25s" fill="freeze" restart="never"/>
+      <rect x="3" y="34" width="614" height="35" fill="#f9fafb"/><rect x="3" y="65" width="614" height="4" fill="#f9fafb"/>
+      <text x="310" y="56" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">👆 点击查看对错</text></g>
+  </svg>
+</div>
+
+<div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.4rem;margin:1rem 0;box-shadow:0 4px 12px rgba(0,0,0,.06)">
+  <div style="font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4f46e5;margin-bottom:.3rem">问题 2</div>
+  <p style="font-weight:650;font-size:1rem;margin:.3rem 0 1rem;color:#1a1a2e">grep 在以下哪种场景中会<strong>失效</strong>（无法发现代码间的关系）？</p>
+
+  <svg viewBox="0 0 620 85" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:6px">
+    <rect x="3" y="3" width="614" height="79" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+    <text x="14" y="26" font-size="14" fill="#1a1a2e" font-family="sans-serif">A. 搜索一个函数名在哪些文件中出现</text>
+    <text x="14" y="48" font-size="13" fill="#dc2626" font-family="sans-serif" font-weight="600">✗ 这反而是 grep 能做的事情——纯字符串匹配。</text>
+    <text x="14" y="66" font-size="13" fill="#dc2626" font-family="sans-serif" font-weight="600">但找到函数名位置的列表 ≠ 理解调用关系。</text>
+    <g><animate attributeName="opacity" from="1" to="0" begin="click" dur="0.25s" fill="freeze" restart="never"/>
+      <rect x="3" y="34" width="614" height="48" fill="#f9fafb"/><rect x="3" y="78" width="614" height="4" fill="#f9fafb"/>
+      <text x="310" y="62" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">👆 点击查看对错</text></g>
+  </svg>
+
+  <svg viewBox="0 0 620 105" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:6px">
+    <rect x="3" y="3" width="614" height="99" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+    <text x="14" y="26" font-size="14" fill="#1a1a2e" font-family="sans-serif">B. 查找一个接口方法被哪些具体实现类覆盖了</text>
+    <text x="14" y="46" font-size="13" fill="#059669" font-family="sans-serif" font-weight="600">✓ 正确！接口方法调用在编译期不知道具体实现。grep 搜方法名只能找到</text>
+    <text x="14" y="64" font-size="13" fill="#059669" font-family="sans-serif" font-weight="600">接口定义和同名函数，但它不理解多态分发——哪个实现类会被实际调</text>
+    <text x="14" y="82" font-size="13" fill="#059669" font-family="sans-serif" font-weight="600">用，取决于运行时类型。这是 grep 的致命盲区。</text>
+    <g><animate attributeName="opacity" from="1" to="0" begin="click" dur="0.25s" fill="freeze" restart="never"/>
+      <rect x="3" y="34" width="614" height="68" fill="#f9fafb"/><rect x="3" y="98" width="614" height="4" fill="#f9fafb"/>
+      <text x="310" y="72" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">👆 点击查看对错</text></g>
+  </svg>
+
+  <svg viewBox="0 0 620 72" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:6px">
+    <rect x="3" y="3" width="614" height="66" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+    <text x="14" y="26" font-size="14" fill="#1a1a2e" font-family="sans-serif">C. 找到所有包含 "TODO" 注释的文件</text>
+    <text x="14" y="50" font-size="13" fill="#dc2626" font-family="sans-serif" font-weight="600">✗ 这也是 grep 擅长的事——纯文本搜索，不需要理解代码结构。</text>
+    <g><animate attributeName="opacity" from="1" to="0" begin="click" dur="0.25s" fill="freeze" restart="never"/>
+      <rect x="3" y="34" width="614" height="35" fill="#f9fafb"/><rect x="3" y="65" width="614" height="4" fill="#f9fafb"/>
+      <text x="310" y="56" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">👆 点击查看对错</text></g>
+  </svg>
+
+  <svg viewBox="0 0 620 85" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;margin-bottom:6px">
+    <rect x="3" y="3" width="614" height="79" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+    <text x="14" y="26" font-size="14" fill="#1a1a2e" font-family="sans-serif">D. 搜索 requestId 参数在哪些文件中被引用</text>
+    <text x="14" y="48" font-size="13" fill="#dc2626" font-family="sans-serif" font-weight="600">✗ 字符串匹配可以做到。但 grep 无法告诉你哪些引用是同一个</text>
+    <text x="14" y="66" font-size="13" fill="#dc2626" font-family="sans-serif" font-weight="600">变量、哪些只是碰巧同名——这需要理解作用域和符号解析。</text>
+    <g><animate attributeName="opacity" from="1" to="0" begin="click" dur="0.25s" fill="freeze" restart="never"/>
+      <rect x="3" y="34" width="614" height="48" fill="#f9fafb"/><rect x="3" y="78" width="614" height="4" fill="#f9fafb"/>
+      <text x="310" y="62" text-anchor="middle" font-size="12" fill="#9ca3af" font-family="sans-serif">👆 点击查看对错</text></g>
+  </svg>
+</div>
+
+<!-- ====== FOOTER ====== -->
+<div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.2rem;margin:1.5rem 0 .8rem;display:flex;gap:.7rem;box-shadow:0 1px 2px rgba(0,0,0,.04)">
+  <span style="font-size:1.3rem;flex-shrink:0;line-height:1.5">📖</span>
+  <div>
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#8b8fa3;margin-bottom:.1rem">主要参考</div>
+    <p style="margin:0;font-size:.88rem;color:#5a5d6e">
+      <a href="https://github.com/colbymchenry/codegraph" style="color:#4f46e5;text-decoration:none;font-weight:500">github.com/colbymchenry/codegraph</a> — README、Architecture 文档、v1.1.0 基准测试数据。
+    </p>
+  </div>
+</div>
+
+<div style="margin-top:2.5rem;padding:1rem 1.2rem;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 1px 2px rgba(0,0,0,.04);font-size:.88rem">
+  <div style="font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;color:#8b8fa3;margin-bottom:.4rem">课程进度</div>
+  <p style="margin:0;color:#5a5d6e">✅ 第 1 课完成 — 你理解了 Structure Discovery Overhead、为什么 grep 不够用，以及 CodeGraph 的核心思路。</p>
+  <p style="margin:.3rem 0 0 0;font-weight:600;color:#4f46e5">▶ 第 2 课：CodeGraph 的四阶段流水线 — Extract → Store → Resolve → Serve</p>
+</div>
+
+<div style="height:3px;background:#e5e7eb;border-radius:2px;margin:2rem 0 0;overflow:hidden">
+  <div style="height:100%;background:linear-gradient(90deg,#4f46e5,#818cf8);border-radius:2px;width:7%"></div>
+</div>
+
+</div>
+</body>
+</html>

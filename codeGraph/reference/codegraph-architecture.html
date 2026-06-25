@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reference: CodeGraph 架构概览</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<div class="container">
+
+<div class="lesson-header">
+  <div class="lesson-badge">参考文档 · 速查</div>
+  <h1>CodeGraph 架构概览</h1>
+  <div class="lesson-meta">
+    <span>📋 关联课程：<a href="../lessons/0001-what-is-codegraph.html">第 1 课</a></span>
+    <span>📦 版本：v1.1.0</span>
+    <span>🔄 更新：2026-06-23</span>
+  </div>
+</div>
+
+<h2>四阶段流水线</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>阶段</th><th>工具</th><th>输入</th><th>输出</th></tr>
+  <tr>
+    <td><strong>1. Extract</strong></td>
+    <td>tree-sitter</td>
+    <td>源码文件（24 种语言）</td>
+    <td>AST → 符号（函数、类、方法）+ 关系（调用、导入、继承）</td>
+  </tr>
+  <tr>
+    <td><strong>2. Store</strong></td>
+    <td>SQLite + FTS5</td>
+    <td>提取的符号和关系</td>
+    <td><code>.codegraph/codegraph.db</code></td>
+  </tr>
+  <tr>
+    <td><strong>3. Resolve</strong></td>
+    <td>CodeGraph 解析引擎</td>
+    <td>符号引用 + 导入关系</td>
+    <td>调用图、继承链、框架路由映射、跨语言桥接</td>
+  </tr>
+  <tr>
+    <td><strong>4. Serve</strong></td>
+    <td>MCP Server</td>
+    <td>Agent 结构化查询</td>
+    <td>源码片段 + 调用链 + 影响分析</td>
+  </tr>
+</table>
+</div>
+
+<h2>核心概念</h2>
+
+<div class="card">
+  <h3>Node（节点）</h3>
+  <p>代码中的<strong>可识别实体</strong>：函数、方法、类、接口、常量、路由处理器、Vuex mutation、Pinia store 等。每个节点代表一个可以"被调用"、"被引用"、"被继承"的符号。</p>
+</div>
+
+<div class="card">
+  <h3>Edge（边）</h3>
+  <p>节点之间的<strong>关系</strong>：</p>
+  <ul>
+    <li><strong>calls</strong> — 函数 A 调用函数 B</li>
+    <li><strong>imports</strong> — 文件 A 导入模块 B</li>
+    <li><strong>extends / implements</strong> — 继承与接口实现</li>
+    <li><strong>routes</strong> — URL 模式 → 处理函数（框架感知）</li>
+    <li><strong>bridges</strong> — 跨语言调用（Swift↔ObjC、React Native 桥）</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Knowledge Graph（知识图谱）</h3>
+  <p>节点 + 边的<strong>整体结构</strong>。不是扁平的符号表，而是表达代码<strong>拓扑结构</strong>的有向图。Agent 可以在图上做"从这个函数出发，追踪所有下游调用"等图遍历操作。</p>
+</div>
+
+<h2>MCP 工具集</h2>
+
+<div class="table-wrap">
+<table>
+  <tr><th>工具</th><th>用途</th><th>默认</th></tr>
+  <tr><td><code>codegraph_explore</code></td><td>主工具：一次查询 → 入口点 + 相关符号 + 调用流 + 影响范围</td><td>✅</td></tr>
+  <tr><td><code>codegraph_node</code></td><td>获取单个符号详情，可读完整源文件</td><td>❌ 隐藏</td></tr>
+  <tr><td><code>codegraph_search</code></td><td>全文搜索整个代码库</td><td>❌ 隐藏</td></tr>
+  <tr><td><code>codegraph_callers</code></td><td>谁调用了这个符号</td><td>❌ 隐藏</td></tr>
+  <tr><td><code>codegraph_callees</code></td><td>这个符号调用了谁</td><td>❌ 隐藏</td></tr>
+  <tr><td><code>codegraph_impact</code></td><td>变更影响范围分析（修改此符号会影响什么）</td><td>❌ 隐藏</td></tr>
+  <tr><td><code>codegraph_files</code></td><td>列出项目中已知文件</td><td>❌ 隐藏</td></tr>
+  <tr><td><code>codegraph_status</code></td><td>索引状态检查</td><td>❌ 隐藏</td></tr>
+</table>
+</div>
+
+<div class="callout">
+  <strong>设计哲学</strong>
+  <p>一个强工具（<code>codegraph_explore</code>）比一堆窄工具更能引导 Agent 正确使用。其他工具可通过 <code>CODEGRAPH_MCP_TOOLS</code> 环境变量重新启用。</p>
+</div>
+
+<h2>三层新鲜度保证</h2>
+
+<ol>
+  <li><strong>文件监听器</strong> — OS 原生事件（FSEvents / inotify）→ debounce 后增量同步</li>
+  <li><strong>过期警告</strong> — debounce 窗口期内，对修改中的文件返回 staleness banner</li>
+  <li><strong>重连校验</strong> — MCP 重连时，用 <code>(size, mtime)</code> + 内容哈希做快速增量对比</li>
+</ol>
+
+<h2>支持的语言（24 种）</h2>
+
+<p>
+TypeScript · JavaScript · Python · Go · Rust · Java · C# · PHP · Ruby · C · C++ · Objective-C · Swift · Kotlin · Scala · Dart · Svelte · Vue · Astro · Liquid · Pascal/Delphi · Lua · Luau · R
+</p>
+
+<h2>框架感知路由</h2>
+
+<p>
+<strong>Python:</strong> Django, Flask, FastAPI &nbsp;·&nbsp;
+<strong>Node:</strong> Express, NestJS &nbsp;·&nbsp;
+<strong>PHP:</strong> Laravel, Drupal &nbsp;·&nbsp;
+<strong>Ruby:</strong> Rails &nbsp;·&nbsp;
+<strong>Java:</strong> Spring, Play &nbsp;·&nbsp;
+<strong>Go:</strong> Gin/Chi/Gorilla/Mux, GoFrame &nbsp;·&nbsp;
+<strong>Rust:</strong> Axum/Actix/Rocket &nbsp;·&nbsp;
+<strong>.NET:</strong> ASP.NET &nbsp;·&nbsp;
+<strong>Swift:</strong> Vapor &nbsp;·&nbsp;
+<strong>React/Vue/Svelte:</strong> React Router/SvelteKit, Vue Router/Nuxt &nbsp;·&nbsp;
+<strong>Astro</strong>
+</p>
+
+<h2>安全</h2>
+
+<ul>
+  <li>🛡 <strong>100% 本地</strong> — 数据从不离开机器，无需 API Key</li>
+  <li>🔐 Spring 配置文件的值（含密码）不暴露 — 仅索引 key</li>
+  <li>🔗 路径穿越已修复（v1.0.0）— 符号链接不暴露项目外文件</li>
+  <li>📁 <code>.gitignore</code> 自动被尊重</li>
+</ul>
+
+<div class="lesson-nav">
+  <strong>参考文档</strong>
+  <p>此文档是 <a href="../lessons/0001-what-is-codegraph.html">第 1 课</a> 的配套速查手册。后续课程会添加更多参考文档。</p>
+</div>
+
+</div>
+
+</body>
+</html>

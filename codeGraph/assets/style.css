@@ -1,0 +1,679 @@
+/* CodeGraph Course — Base Stylesheet */
+/* Clean, modern, polished — built for learning */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #fafbfc;
+  --surface: #ffffff;
+  --text: #1a1a2e;
+  --text-secondary: #5a5d6e;
+  --text-muted: #8b8fa3;
+  --accent: #4f46e5;
+  --accent-light: #eef2ff;
+  --accent-hover: #4338ca;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --code-bg: #1e1e2e;
+  --code-text: #e2e8f0;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.06);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,.08);
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --max-width: 760px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  font-size: 17px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,70,229,.03) 0%, transparent 100%),
+    radial-gradient(ellipse 60% 50% at 90% 90%, rgba(5,150,105,.02) 0%, transparent 100%);
+  min-height: 100vh;
+}
+
+/* ── Layout ─────────────────────── */
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+/* ── Header ─────────────────────── */
+
+.lesson-header {
+  margin-bottom: 2.5rem;
+}
+
+.lesson-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: .3rem .75rem;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+  letter-spacing: .02em;
+}
+
+.lesson-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.25;
+  margin-bottom: .5rem;
+  background: linear-gradient(135deg, var(--text) 0%, #3d3b5c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lesson-meta {
+  display: flex;
+  gap: 1.25rem;
+  font-size: .88rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.lesson-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+/* ── Typography ─────────────────── */
+
+h2 {
+  font-size: 1.4rem;
+  font-weight: 650;
+  margin: 2.5rem 0 .6rem;
+  letter-spacing: -.015em;
+  color: var(--text);
+  padding-top: .5rem;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 1.8rem 0 .5rem;
+  color: var(--text);
+}
+
+p { margin: .9rem 0; color: var(--text-secondary); }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1.5px solid transparent;
+  transition: border-color .15s;
+}
+
+a:hover { border-bottom-color: var(--accent); }
+
+strong { font-weight: 650; color: var(--text); }
+
+ul, ol { margin: .6rem 0 .6rem 1.6rem; color: var(--text-secondary); }
+li { margin: .35rem 0; }
+li::marker { color: var(--text-muted); }
+
+/* ── Inline Code ────────────────── */
+
+:not(pre) > code {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  font-size: .82rem;
+  font-weight: 500;
+  background: var(--accent-light);
+  color: #4338ca;
+  padding: .12em .45em;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ── Block Code ─────────────────── */
+
+pre {
+  background: var(--code-bg);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.4rem;
+  overflow-x: auto;
+  margin: 1.2rem 0;
+  box-shadow: var(--shadow-sm);
+  line-height: 1.6;
+}
+
+pre code {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  font-size: .8rem;
+  font-weight: 400;
+  color: var(--code-text);
+  background: none;
+  padding: 0;
+  white-space: pre;
+}
+
+/* ── Cards ──────────────────────── */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.6rem;
+  margin: 1.2rem 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.card h3 { margin-top: 0; }
+
+/* ── Callouts ───────────────────── */
+
+.callout {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 1.1rem 1.3rem;
+  margin: 1.4rem 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.callout > strong:first-child {
+  display: block;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--accent);
+  margin-bottom: .3rem;
+}
+
+.callout.tip       { border-left-color: var(--green); }
+.callout.tip > strong:first-child { color: var(--green); }
+.callout.warning   { border-left-color: var(--amber); }
+.callout.warning > strong:first-child { color: var(--amber); }
+.callout.danger    { border-left-color: var(--red); }
+.callout.danger > strong:first-child { color: var(--red); }
+
+/* ── Tables ─────────────────────── */
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.2rem 0;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+}
+
+th {
+  font-weight: 650;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-muted);
+  background: var(--border-light);
+  padding: .7rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: .65rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  background: var(--surface);
+}
+
+tr:last-child td { border-bottom: none; }
+
+/* ── Quiz ───────────────────────── */
+
+.quiz {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow .2s;
+}
+
+.quiz:hover { box-shadow: var(--shadow-lg); }
+
+.quiz h3 {
+  margin: 0 0 .3rem;
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--accent);
+}
+
+.quiz .question {
+  font-weight: 650;
+  font-size: 1.05rem;
+  margin: .4rem 0 1.1rem;
+  color: var(--text);
+}
+
+.quiz-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+
+.quiz-options button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: .7rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .92rem;
+  color: var(--text);
+  transition: all .15s;
+  position: relative;
+}
+
+.quiz-options button:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  transform: translateX(2px);
+}
+
+.quiz-options button:active { transform: scale(.995); }
+
+.quiz-options button.correct {
+  border-color: var(--green);
+  background: var(--green-light);
+  color: var(--green);
+  font-weight: 600;
+}
+
+.quiz-options button.wrong {
+  border-color: var(--red);
+  background: var(--red-light);
+  color: var(--red);
+}
+
+.quiz-feedback {
+  margin-top: .9rem;
+  font-weight: 600;
+  font-size: .92rem;
+  min-height: 1.5em;
+}
+
+.quiz-feedback.correct { color: var(--green); }
+.quiz-feedback.wrong { color: var(--red); }
+
+/* ── Primary Source ─────────────── */
+
+.primary-source {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.4rem;
+  margin: 2rem 0 1rem;
+  display: flex;
+  gap: .8rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.primary-source .icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  line-height: 1.5;
+}
+
+.primary-source strong {
+  display: block;
+  font-size: .82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-muted);
+  margin-bottom: .15rem;
+}
+
+.primary-source p { margin: 0; }
+
+/* ── Nav ────────────────────────── */
+
+.lesson-nav {
+  margin-top: 3rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  font-size: .9rem;
+}
+
+.lesson-nav > strong {
+  display: block;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  margin-bottom: .6rem;
+}
+
+.lesson-nav .next {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: .3rem;
+}
+
+/* ── Flow Diagram (vertical step chain) ── */
+
+.flow-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.2rem;
+  margin: 1.2rem 0;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.flow-start {
+  font-weight: 650;
+  font-size: .95rem;
+  color: var(--text);
+  background: var(--accent-light);
+  padding: .5rem 1rem;
+  border-radius: 100px;
+  margin-bottom: .3rem;
+}
+
+.flow-arrow {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1;
+  padding: .15rem 0;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .45rem .9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  min-width: 280px;
+  font-size: .88rem;
+}
+
+.flow-step.wasted { border-color: var(--red); background: var(--red-light); }
+
+.flow-step .flow-icon { font-size: 1rem; flex-shrink: 0; }
+.flow-step .flow-label { font-family: 'JetBrains Mono', monospace; font-size: .82rem; font-weight: 500; color: var(--text); }
+.flow-step .flow-result { margin-left: auto; font-size: .8rem; color: var(--text-muted); }
+
+.flow-dots {
+  font-size: .85rem;
+  color: var(--text-muted);
+  padding: .3rem 0;
+}
+
+.flow-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  justify-content: center;
+  margin-top: .3rem;
+}
+
+.flow-summary-item {
+  font-size: .82rem;
+  font-weight: 600;
+  padding: .35rem .7rem;
+  border-radius: 100px;
+  background: var(--red-light);
+  color: var(--red);
+}
+
+.flow-summary-item.highlight {
+  background: var(--amber-light);
+  color: var(--amber);
+}
+
+/* ── Comparison (side-by-side) ───── */
+
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: .6rem;
+  margin: 1.2rem 0;
+  align-items: start;
+}
+
+.comparison-col {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.comparison-col.bad  { border-color: #fecaca; }
+.comparison-col.good { border-color: #a7f3d0; }
+
+.comparison-title {
+  font-weight: 650;
+  font-size: .85rem;
+  padding: .5rem .8rem;
+  text-align: center;
+}
+
+.comparison-col.bad  .comparison-title { background: var(--red-light); color: var(--red); }
+.comparison-col.good .comparison-title { background: var(--green-light); color: var(--green); }
+
+.comparison-body {
+  padding: .8rem;
+  font-size: .88rem;
+  line-height: 1.8;
+  text-align: center;
+  color: var(--text-secondary);
+  background: var(--surface);
+}
+
+.comparison-vs {
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  padding: 0 .3rem;
+}
+
+@media (max-width: 500px) {
+  .comparison {
+    grid-template-columns: 1fr;
+  }
+  .comparison-vs {
+    justify-content: center;
+    padding: .3rem 0;
+  }
+}
+
+/* ── Pipeline Diagram (horizontal stages) ── */
+
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 1.2rem 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pipeline-stage {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: .9rem 1rem;
+  text-align: center;
+  min-width: 100px;
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s, box-shadow .15s;
+}
+
+.pipeline-stage:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.pipeline-stage .stage-num {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--accent);
+  margin-bottom: .2rem;
+}
+
+.pipeline-stage .stage-name {
+  font-weight: 650;
+  font-size: .95rem;
+  color: var(--text);
+}
+
+.pipeline-stage .stage-tool {
+  font-size: .78rem;
+  color: var(--text-muted);
+  margin-top: .2rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.pipeline-arrow {
+  font-size: 1.2rem;
+  color: var(--accent);
+  font-weight: 700;
+  padding: 0 .35rem;
+  flex-shrink: 0;
+}
+
+.pipeline-detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: .6rem;
+  margin: 1rem 0;
+}
+
+.pipeline-detail .card {
+  margin: 0;
+  padding: 1rem 1.2rem;
+}
+
+.pipeline-detail .card h4 {
+  font-size: .82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--accent);
+  margin: 0 0 .4rem;
+}
+
+.pipeline-detail .card p {
+  margin: 0;
+  font-size: .88rem;
+}
+
+/* ── ASCII Diagram ───────────────── */
+
+.diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin: 1.2rem 0;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+  color: var(--text-secondary);
+}
+
+/* ── Progress Bar ───────────────── */
+
+.progress-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 2rem 0 0;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #818cf8);
+  border-radius: 2px;
+  transition: width .4s ease;
+}
+
+/* ── Print ──────────────────────── */
+
+@media print {
+  body { background: white; font-size: 11pt; }
+  .quiz-options button { border: 1px solid #999; }
+  .lesson-nav, .progress-bar { display: none; }
+  .container { max-width: 100%; padding: 0; }
+}
+
+/* ── Responsive ─────────────────── */
+
+@media (max-width: 640px) {
+  html { font-size: 15px; }
+  .container { padding: 1.5rem 1rem 3rem; }
+  h1 { font-size: 1.7rem; }
+}

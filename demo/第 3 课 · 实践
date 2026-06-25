@@ -1,0 +1,183 @@
+第 3 课 · 实践
+安装与初始化 CodeGraph
+📚 课程 0003
+⏱ 预计 15 分钟
+← 第 2 课
+1. 你需要准备什么
+CodeGraph 自带运行时，不需要安装 Node.js。它把自己的 Node.js 打包进去了——下载解压就能用，不需要编译、不需要原生构建、所有平台行为一致。
+
+🖥️ 操作系统
+macOS (x64, arm64)
+Linux (x64, arm64)
+Windows (x64, arm64)
+
+🤖 支持的 Agent
+Claude Code
+Cursor
+Codex CLI
+Gemini CLI
+Antigravity
+Kiro
+
+📦 项目条件
+任何支持的语言项目
+24 种语言
+17 种框架路由
+
+2. 安装 CLI
+三种方式，任选一种：
+
+✅ 推荐：一键安装脚本
+curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+macOS / Linux。Windows 用 PowerShell 版本：irm .../install.ps1 | iex
+
+npm 全局安装（需要 Node.js）
+npm i -g @colbymchenry/codegraph
+安装完成后打开一个新终端，让 PATH 生效。验证安装：
+
+codegraph --version
+# → v1.1.0 或更高
+之后随时升级：codegraph upgrade——自动检测安装方式（脚本/npm/npx）并原地更新。
+
+3. 接入 AI Agent
+安装完 CLI 后，需要把 CodeGraph 的 MCP Server 配置写入 Agent 的配置文件里。这一步不会索引任何代码——只是告诉 Agent "有 CodeGraph 这个工具可以用"。
+
+codegraph install
+这个命令做了什么：
+
+🔍 自动检测
+扫描你机器上安装了哪些 Agent（Claude Code、Cursor、Codex 等），自动写入对应的 MCP 配置。
+
+📝 写入配置
+在 Agent 的 MCP config 中添加 CodeGraph Server 条目，包含 stdio 启动命令和工具权限。
+
+📋 注入指令
+在 CLAUDE.md / AGENTS.md 中插入一段 marker-fenced 指令，告诉子 Agent 也可以用 codegraph explore CLI。
+
+以 Claude Code 为例，安装后实际写入的 MCP 配置：
+{
+  "mcpServers": {
+    "codegraph": {
+      "type": "stdio",
+      "command": "codegraph",
+      "args": ["serve", "--mcp"]
+    }
+  }
+}
+同时会自动设置 mcp__codegraph__* 通配符权限，Agent 调用 CodeGraph 工具时不需要每次弹确认框。
+
+常用参数： --target claude 只装给特定 Agent、 --location global 全局安装、 --yes 跳过确认。
+
+4. 初始化项目
+进入你的项目目录，运行：
+
+cd your-project
+codegraph init
+init 会做这些事情：
+
+🔍
+扫描项目文件
+自动跳过 node_modules 等
+↓
+🌳
+tree-sitter 解析 → 提取符号
+24 种语言
+↓
+🔗
+解析符号引用关系
+跨文件 + 框架路由
+↓
+💾
+写入 .codegraph/codegraph.db
+SQLite + FTS5
+↓
+✅
+完成！文件监听器已启动
+后续自动同步
+5. 生成的文件
+codegraph init 只在你的项目里创建一个目录：
+
+your-project/
+├── .codegraph/
+│   ├── codegraph.db       ← SQLite 数据库（图数据）
+│   └── codegraph.json     ← 项目级配置（可选，手动创建）
+└── ...
+建议把 .codegraph/ 加入 .gitignore：
+
+# .gitignore
+.codegraph/
+索引文件不提交到 Git——它是派生数据，团队成员各自在自己机器上运行 codegraph init 即可。
+
+6. 自动同步与日常使用
+🔄 自动同步
+init 之后不需要手动操作。文件监听器检测到变化 → debounce 2 秒 → 增量更新索引。写完代码保存，图就更新了。
+
+🧹 卸载
+codegraph uninstall 从所有 Agent 配置中移除 CodeGraph，codegraph uninit 删除项目索引。
+
+🏗️ Monorepo
+在根目录运行 codegraph init，所有子项目一起索引。Agent 查询时通过 projectPath 参数指定目标。
+
+7. 验证是否生效
+在 Claude Code 里问一个结构性问题，看 Agent 是否使用了 CodeGraph 而不是 grep：
+
+❌ 没装 CodeGraph
+grep("createUser")
+Read(controller.ts)
+Read(service.ts)
+Read(repository.ts)
+… 多次工具调用
+✅ 装了 CodeGraph
+codegraph_explore(
+  "createUser 调用链"
+)
+→ 1 次调用，完整结果
+也可以手动检查索引状态：
+
+codegraph status
+# → 显示索引了多少个文件、多少符号、多少关系边
+小测验
+👆 点击每个选项的灰色区域查看对错
+
+问题 1
+codegraph install 和 codegraph init 的区别是什么？
+
+A. 没有区别，都是安装 CodeGraph
+✗ 不对。两个命令做完全不同的事情。
+install 配置 Agent 连接，init 构建代码索引。
+👆 点击查看对错
+B. install 把 MCP Server 配置写入 Agent，init 构建项目代码图谱
+✓ 正确！install 只改 Agent 配置（MCP + CLAUDE.md），不索引代码。
+init 在项目目录下执行 Extract → Store → Resolve，构建 .codegraph/。
+👆 点击查看对错
+C. install 安装 CLI 工具，init 初始化 Git 仓库
+✗ 不对。init 不涉及 Git，它是构建代码图谱。
+👆 点击查看对错
+D. install 下载 CodeGraph，init 启动后台服务
+✗ 不对。CLI 是通过 curl/npm 安装的，install 是配置 Agent。
+👆 点击查看对错
+问题 2
+为什么建议把 .codegraph/ 加入 .gitignore？
+
+A. 因为 .codegraph/ 包含密码等敏感信息
+✗ 不对。CodeGraph 不会提取密码（Spring 配置的值被排除）。
+👆 点击查看对错
+B. 索引是派生数据，团队成员各自运行 init 生成即可
+✓ 正确！codegraph.db 是从源码派生的二进制数据，跟 node_modules
+一样不应该提交。每个人在自己的机器上 init，索引自动适配本地路径。
+👆 点击查看对错
+C. 因为 codegraph.db 文件太大，Git 无法处理
+✗ 文件大小可能是个因素，但不是核心原因（SQLite 很紧凑）。
+👆 点击查看对错
+D. CodeGraph 官方不允许提交索引文件
+✗ 没有这个规定。这是最佳实践建议，不是硬性限制。
+👆 点击查看对错
+📖
+主要参考
+github.com/colbymchenry/codegraph — README 中的 Installation 和 Quick Start 部分，v1.1.0 CHANGELOG。
+
+课程进度
+✅ 第 3 课完成 — 掌握了安装 CLI、接入 Agent、初始化项目、日常使用。
+
+▶ 第 4 课：深入原理 — tree-sitter 解析 + 框架路由 + 跨语言桥接
+

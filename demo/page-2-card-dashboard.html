@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CodeGraph — 卡片仪表盘风</title></head>
+<body style="margin:0;font-family:'Inter',-apple-system,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:40px 20px">
+
+<!-- 顶部导航 -->
+<div style="max-width:1000px;margin:0 auto 32px;display:flex;justify-content:space-between;align-items:center">
+  <div>
+    <div style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-1px">📚 CodeGraph</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-top:2px">课程 0003 · 预计 15 分钟</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="background:rgba(255,255,255,0.2);color:#fff;font-size:12px;padding:6px 14px;border-radius:20px;backdrop-filter:blur(10px)">← 第 2 课</span>
+    <span style="background:rgba(255,255,255,0.25);color:#fff;font-size:12px;padding:6px 14px;border-radius:20px;backdrop-filter:blur(10px)">第 4 课 →</span>
+  </div>
+</div>
+
+<!-- 主内容网格 -->
+<div style="max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+
+  <!-- 卡片1: 准备条件 — 全宽 -->
+  <div style="grid-column:1/-1;background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div style="width:40px;height:40px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff">1</div>
+      <div style="font-size:18px;font-weight:700;color:#1a1a2e">你需要准备什么</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div style="background:#f8f7ff;border-radius:12px;padding:18px;text-align:center">
+        <div style="font-size:32px;margin-bottom:10px">🖥️</div>
+        <div style="font-size:13px;font-weight:600;color:#4a4a6a;margin-bottom:6px">操作系统</div>
+        <div style="font-size:11px;color:#7c7c9a;line-height:1.7">macOS · Linux<br>Windows<br>x64 & arm64</div>
+      </div>
+      <div style="background:#f8f7ff;border-radius:12px;padding:18px;text-align:center">
+        <div style="font-size:32px;margin-bottom:10px">🤖</div>
+        <div style="font-size:13px;font-weight:600;color:#4a4a6a;margin-bottom:6px">支持的 Agent</div>
+        <div style="font-size:11px;color:#7c7c9a;line-height:1.7">Claude Code<br>Cursor · Codex CLI<br>Gemini · Kiro</div>
+      </div>
+      <div style="background:#f8f7ff;border-radius:12px;padding:18px;text-align:center">
+        <div style="font-size:32px;margin-bottom:10px">📦</div>
+        <div style="font-size:13px;font-weight:600;color:#4a4a6a;margin-bottom:6px">项目条件</div>
+        <div style="font-size:11px;color:#7c7c9a;line-height:1.7">任何语言<br>24 种语言<br>17 种框架路由</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 卡片2: 安装 CLI -->
+  <div style="grid-column:span 2;background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div style="width:40px;height:40px;background:linear-gradient(135deg,#f093fb,#f5576c);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff">2</div>
+      <div style="font-size:18px;font-weight:700;color:#1a1a2e">安装 CLI</div>
+      <span style="margin-left:auto;background:#fff3e0;color:#e65100;font-size:11px;font-weight:600;padding:4px 10px;border-radius:10px">三种方式</span>
+    </div>
+
+    <div style="background:#fff5f5;border-left:4px solid #f5576c;border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:700;color:#f5576c;margin-bottom:4px">✅ 推荐：一键安装</div>
+      <div style="background:#1e1e2e;color:#a6e3a1;padding:10px 14px;border-radius:8px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;overflow-x:auto;border-radius:6px">
+        curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+      </div>
+    </div>
+
+    <div style="background:#f8f9ff;border-left:4px solid #667eea;border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:600;color:#667eea;margin-bottom:4px">npm 全局安装 <span style="font-weight:400;color:#999;font-size:11px">（需 Node.js）</span></div>
+      <div style="background:#1e1e2e;color:#a6e3a1;padding:10px 14px;border-radius:8px;font-family:'SF Mono','Fira Code',monospace;font-size:11px">
+        npm i -g @colbymchenry/codegraph
+      </div>
+    </div>
+
+    <div style="background:#f0fdf4;border-radius:8px;padding:12px 16px;font-size:12px;color:#166534">
+      ✅ 验证：<span style="font-family:'SF Mono',monospace;background:#dcfce7;padding:2px 8px;border-radius:4px">codegraph --version</span> → v1.1.0+
+    </div>
+  </div>
+
+  <!-- 卡片3: 升级提示 — 侧栏小卡片 -->
+  <div style="background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.12);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+    <div style="font-size:40px;margin-bottom:12px">⚡</div>
+    <div style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:6px">随时升级</div>
+    <div style="background:#1e1e2e;color:#a6e3a1;padding:8px 14px;border-radius:8px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;margin-bottom:8px">
+      codegraph upgrade
+    </div>
+    <div style="font-size:11px;color:#999">自动检测安装方式<br>原地更新，无需手动操作</div>
+  </div>
+
+  <!-- 卡片4: 接入 Agent -->
+  <div style="grid-column:1/-1;background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div style="width:40px;height:40px;background:linear-gradient(135deg,#43e97b,#38f9d7);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff">3</div>
+      <div style="font-size:18px;font-weight:700;color:#1a1a2e">接入 AI Agent</div>
+    </div>
+
+    <div style="background:#1e1e2e;color:#a6e3a1;padding:12px 18px;border-radius:10px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;margin-bottom:16px">
+      codegraph install
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div style="background:#f0fdf4;border-radius:10px;padding:16px;text-align:center">
+        <div style="background:#bbf7d0;color:#166534;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;margin:0 auto 10px">1</div>
+        <div style="font-size:13px;font-weight:600;color:#166534">🔍 自动检测</div>
+      </div>
+      <div style="background:#f0fdf4;border-radius:10px;padding:16px;text-align:center">
+        <div style="background:#bbf7d0;color:#166534;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;margin:0 auto 10px">2</div>
+        <div style="font-size:13px;font-weight:600;color:#166534">📝 写入配置</div>
+      </div>
+      <div style="background:#f0fdf4;border-radius:10px;padding:16px;text-align:center">
+        <div style="background:#bbf7d0;color:#166534;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;margin:0 auto 10px">3</div>
+        <div style="font-size:13px;font-weight:600;color:#166534">📋 注入指令</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 卡片5: 初始化 -->
+  <div style="grid-column:span 2;background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div style="width:40px;height:40px;background:linear-gradient(135deg,#fa8231,#f7b731);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff">4</div>
+      <div style="font-size:18px;font-weight:700;color:#1a1a2e">初始化项目</div>
+    </div>
+
+    <div style="background:#1e1e2e;color:#a6e3a1;padding:12px 18px;border-radius:10px;font-family:'SF Mono','Fira Code',monospace;font-size:12px;margin-bottom:18px">
+      cd your-project && codegraph init
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fafafa;border-radius:8px">
+        <span style="font-size:18px">🔍</span>
+        <span style="font-size:12px;color:#666">扫描项目文件 → 自动跳过 node_modules</span>
+        <span style="margin-left:auto;font-size:10px;color:#ccc">→</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fafafa;border-radius:8px">
+        <span style="font-size:18px">🌳</span>
+        <span style="font-size:12px;color:#666">tree-sitter 解析 → 提取符号（24 种语言）</span>
+        <span style="margin-left:auto;font-size:10px;color:#ccc">→</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fafafa;border-radius:8px">
+        <span style="font-size:18px">🔗</span>
+        <span style="font-size:12px;color:#666">解析引用关系 → 跨文件 + 框架路由</span>
+        <span style="margin-left:auto;font-size:10px;color:#ccc">→</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fafafa;border-radius:8px">
+        <span style="font-size:18px">💾</span>
+        <span style="font-size:12px;color:#666">写入 .codegraph/codegraph.db（SQLite + FTS5）</span>
+        <span style="margin-left:auto;font-size:10px;color:#ccc">→</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#e6f7e6;border-radius:8px">
+        <span style="font-size:18px">✅</span>
+        <span style="font-size:12px;color:#1a7f37;font-weight:600">完成！文件监听器已启动，后续自动同步</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 卡片6: 文件结构 -->
+  <div style="background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+    <div style="font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:16px">📁 生成的文件</div>
+    <div style="background:#1e1e2e;color:#cdd6f4;padding:16px;border-radius:10px;font-family:'SF Mono','Fira Code',monospace;font-size:11px;line-height:2;margin-bottom:12px">
+      <span style="color:#89b4fa">your-project/</span><br>
+      <span style="color:#a6adc8">├──</span> <span style="color:#cba6f7">.codegraph/</span><br>
+      <span style="color:#a6adc8">│   ├──</span> <span style="color:#a6e3a1">codegraph.db</span><br>
+      <span style="color:#a6adc8">│   └──</span> codegraph.json<br>
+      <span style="color:#a6adc8">└──</span> ...
+    </div>
+    <div style="font-size:11px;color:#f5576c;background:#fff5f5;padding:10px;border-radius:8px">
+      ⚠️ 建议：将 .codegraph/ 加入 .gitignore
+    </div>
+  </div>
+
+  <!-- 卡片7: 自动同步 -->
+  <div style="grid-column:span 2;background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div style="width:40px;height:40px;background:linear-gradient(135deg,#4facfe,#00f2fe);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff">5</div>
+      <div style="font-size:18px;font-weight:700;color:#1a1a2e">自动同步与日常使用</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+      <div style="background:linear-gradient(135deg,#e0f2fe,#f0f9ff);border-radius:12px;padding:18px;text-align:center">
+        <div style="font-size:28px;margin-bottom:8px">🔄</div>
+        <div style="font-size:13px;font-weight:600;color:#0c4a6e">自动同步</div>
+        <div style="font-size:11px;color:#64748b;margin-top:4px">文件变化 → debounce 2s → 增量更新</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#fee2e2,#fef2f2);border-radius:12px;padding:18px;text-align:center">
+        <div style="font-size:28px;margin-bottom:8px">🧹</div>
+        <div style="font-size:13px;font-weight:600;color:#991b1b">卸载</div>
+        <div style="font-size:11px;color:#64748b;margin-top:4px">uninstall 移除配置<br>uninit 删除索引</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#fef3c7,#fffbeb);border-radius:12px;padding:18px;text-align:center">
+        <div style="font-size:28px;margin-bottom:8px">🏗️</div>
+        <div style="font-size:13px;font-weight:600;color:#92400e">Monorepo</div>
+        <div style="font-size:11px;color:#64748b;margin-top:4px">根目录 init<br>所有子项目一起索引</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 卡片8: MCP 配置预览 -->
+  <div style="background:#1e1e2e;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
+    <div style="font-size:14px;font-weight:700;color:#cdd6f4;margin-bottom:14px">📝 MCP 配置示例</div>
+    <div style="font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:#a6adc8;line-height:1.9">
+      {<br>
+      &nbsp;&nbsp;<span style="color:#89b4fa">"mcpServers"</span>: {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e3a1">"codegraph"</span>: {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#89b4fa">"type"</span>: <span style="color:#a6e3a1">"stdio"</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#89b4fa">"command"</span>: <span style="color:#a6e3a1">"codegraph"</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#89b4fa">"args"</span>: [<span style="color:#a6e3a1">"serve"</span>, <span style="color:#a6e3a1">"--mcp"</span>]<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;}<br>
+      }
+    </div>
+  </div>
+
+  <!-- 卡片9: 验证 -->
+  <div style="grid-column:1/-1;background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div style="width:40px;height:40px;background:linear-gradient(135deg,#ff6b6b,#ee5a24);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff">6</div>
+      <div style="font-size:18px;font-weight:700;color:#1a1a2e">验证是否生效</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <div style="border:2px solid #fecaca;border-radius:12px;padding:18px;background:#fff5f5">
+        <div style="font-size:14px;font-weight:700;color:#dc2626;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span style="font-size:18px">❌</span> 没装 CodeGraph
+        </div>
+        <div style="font-family:'SF Mono',monospace;font-size:10px;color:#991b1b;line-height:2;background:#fee2e2;padding:10px;border-radius:8px">
+          grep("createUser")<br>
+          Read(controller.ts)<br>
+          Read(service.ts)<br>
+          Read(repository.ts)<br>
+          <span style="color:#7f1d1d">… 多次工具调用</span>
+        </div>
+      </div>
+
+      <div style="border:2px solid #bbf7d0;border-radius:12px;padding:18px;background:#f0fdf4">
+        <div style="font-size:14px;font-weight:700;color:#16a34a;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span style="font-size:18px">✅</span> 装了 CodeGraph
+        </div>
+        <div style="font-family:'SF Mono',monospace;font-size:10px;color:#14532d;line-height:2;background:#dcfce7;padding:10px;border-radius:8px">
+          codegraph_explore(<br>
+          &nbsp;&nbsp;"createUser 调用链"<br>
+          )<br>
+          <span style="color:#166534;font-weight:600">→ 1 次调用，完整结果</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 卡片10: 测验 -->
+  <div style="grid-column:1/-1;background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <span style="font-size:24px">📝</span>
+      <div style="font-size:18px;font-weight:700;color:#1a1a2e">小测验</div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <div style="font-size:14px;font-weight:600;color:#1a1a2e;margin-bottom:12px">
+        问题 1：codegraph install 和 codegraph init 的区别？
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+        <div style="padding:10px 14px;background:#f6f8fa;border-radius:8px;font-size:12px;color:#8b949e">A. 没有区别，都是安装 CodeGraph</div>
+        <div style="padding:10px 14px;background:#e6f7e6;border:1px solid #bbf7d0;border-radius:8px;font-size:12px;color:#1a7f37;font-weight:600">B. ✓ install 配置 Agent，init 构建图谱</div>
+        <div style="padding:10px 14px;background:#f6f8fa;border-radius:8px;font-size:12px;color:#8b949e">C. install 安装 CLI，init 初始化 Git</div>
+        <div style="padding:10px 14px;background:#f6f8fa;border-radius:8px;font-size:12px;color:#8b949e">D. install 下载 CodeGraph，init 启动服务</div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:14px;font-weight:600;color:#1a1a2e;margin-bottom:12px">
+        问题 2：为什么要把 .codegraph/ 加入 .gitignore？
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+        <div style="padding:10px 14px;background:#f6f8fa;border-radius:8px;font-size:12px;color:#8b949e">A. 包含密码等敏感信息</div>
+        <div style="padding:10px 14px;background:#e6f7e6;border:1px solid #bbf7d0;border-radius:8px;font-size:12px;color:#1a7f37;font-weight:600">B. ✓ 索引是派生数据，各自生成</div>
+        <div style="padding:10px 14px;background:#f6f8fa;border-radius:8px;font-size:12px;color:#8b949e">C. 文件太大，Git 无法处理</div>
+        <div style="padding:10px 14px;background:#f6f8fa;border-radius:8px;font-size:12px;color:#8b949e">D. 官方不允许提交索引文件</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部 CTA -->
+  <div style="grid-column:1/-1;text-align:center;padding:12px 0 40px">
+    <div style="display:inline-block;background:#fff;border-radius:16px;padding:20px 40px;box-shadow:0 8px 32px rgba(0,0,0,0.12)">
+      <div style="font-size:14px;color:#1a7f37;font-weight:600;margin-bottom:8px">✅ 第 3 课完成 — 掌握了安装 CLI、接入 Agent、初始化项目、日常使用</div>
+      <a href="#" style="display:inline-block;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:14px;font-weight:600;padding:12px 28px;border-radius:30px;text-decoration:none;letter-spacing:0.3px">▶ 第 4 课：深入原理 →</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
