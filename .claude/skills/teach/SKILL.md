@@ -138,3 +138,72 @@ Glossaries, in particular, are an essential reference. Once one is created, it s
 ## `NOTES.md`
 
 The user will sometimes express preferences of how they want to be taught, or things you should keep in mind. This is the place to record those preferences, so you can refer back to them when designing lessons or working with the user.
+
+## 公众号课程发布规则（面向课程创作）
+
+当创建的课程 HTML 供公众号（WeChat Official Account）发布时，必须遵守以下规则：
+
+### 内容策略
+- **不设"下一课"按钮/链接** — 公众号文章一篇一篇发布，不能误导导航
+- **禁止交互式/AI 助手口吻** — 不能出现"告诉我""有疑问问我""直接问 Claude"等表述，公众号是单向传播
+- **文章开头放爆点数据** — GitHub Trending 排名、Star 数、单日增量等社交证明（social proof hooks）吸引眼球
+- **突出项目卖点** — "GitHub 周榜第 1 名"、"XX K+ Stars"等必须在显眼位置
+- **口语化写作（硬性要求）** — 整篇文章必须像跟朋友聊天，AI 味必须清零。具体约束：
+  - **彻底清除以下 AI 腔调**：不要"让我们""首先""其次""总之""值得一提的是""在此背景下""综上所述""换言之""可见"等书面连接词
+  - **多用日常口语表达**："说白了""怎么着""好家伙""你琢磨琢磨""你猜怎么着""这玩意儿""说白了就是""那必须的""有一说一"
+  - **可以抖包袱、讲故事、引用**：开头用场景或痛点引入、中间穿插小故事、结尾用金句收尾
+  - **技术术语不回避，但必须用大白话解释**：比如不说"OCI-compatible container runtime"，说"你能用它 pull Docker Hub 上的镜像、build Dockerfile"
+  - **检查方法**：写完读一遍，如果任何一句话你觉得"这不像我平时说话"，就重写。标准是：你把这篇文章发到朋友圈，朋友不会觉得是 AI 写的
+- **实操内容必须做细** — 每个命令/操作必须附带：
+  - 完整的命令示例（含参数说明）
+  - 执行后的预期输出（比如 `container ls` 会显示什么字段）
+  - 新手容易踩的坑（比如第一次跑 `container system start` 会自动下载内核，需要网络；macOS 15 下容器间无法通信）
+  - 真实场景的应用案例（不要只列 API，要告诉读者"什么时候你会用这个命令"）
+
+### 视觉样式（golden-style）
+- **暖棕金色系**：body 背景 `#f5f0e8`，标题 `#3d2b1f`，副标题 `#8b6914`，文字 `#4a3728`
+- **inline-style only**，不使用外部 CSS 或 `<style>` 标签
+- **不使用 JavaScript**
+- **不使用 GIF 图片** — 公众号编辑器不支持 GIF，用静态图片（SVG/PNG）或纯文字代替
+
+### 文章开头结构
+- **保留笔记本头部**（课程笔记标签、主标题、副标题、分隔线、预计时间）— 标题需要提供给公众号
+- **封面图放在笔记本头部之后、正文之前**，封面图已包含社交证明信息（版本标签、统计数据、社区热评）
+- **正文中不再重复生成社交证明横幅**（统计卡片那一块）— 因为封面图已经包含，重复会视觉冗余
+
+### 测验格式
+- **必须使用 SVG animate 格式**，参考 `openMontage/lessons/0001-what-is-openmontage.html` 的实现：
+  ```
+  <svg ...><g><rect/><text/><animate attributeName="opacity" begin="click" .../></g><g opacity="0"><rect/><text/><animate attributeName="opacity" begin="click" .../></g></svg>
+  ```
+- 不使用 div 静态列表或 JavaScript 实现的交互
+- 每个选项两个 SVG `<g>`：第一个显示选项文字，第二个（opacity=0）显示 ✓/✗ 反馈
+
+### 课程输出位置
+- **课程目录放在项目根目录**，如 `openMontage/`、`codeGraph/`、`palmier-pro/`，**不要放到 `.claude/skills/teach/` 下**
+- 课程目录结构：`MISSION.md`、`RESOURCES.md`、`NOTES.md`、`lessons/`、`reference/`、`assets/`、`learning-records/`
+
+### Golden-style 修订说明
+- **头部去掉三圆点装饰**（不再使用三个圆点的 flex 容器）
+- **社交证明横幅用浅色搭配**：`background:#f0e8d8;border:1px solid #d4c4a8;border-radius:8px`，数字用 `color:#8b6914`，**不要用暗色渐变**（不要用 `linear-gradient(135deg,#3d2b1f,#5c3d30)`）
+
+### 封面图流程（公众号必备）
+公众号必须上传一张图作为封面图，因此每篇文章需要额外生成一张 2.35:1 的 JPEG 封面图片。流程如下：
+
+1. **设计 SVG 封面** — 在 `lessons/cover.svg` 中手动绘制课程开篇信息的 SVG（viewBox="0 0 1175 500"）
+   - 包含：版本标签、主标题、副标题、一句话说明、关键统计卡片、社区热评
+   - 使用 golden-style 配色，与文章风格统一
+2. **SVG → PNG（Edge headless 截图）** — 用 Microsoft Edge 无头模式渲染 SVG 并截图：
+   ```
+   "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe" --headless --screenshot="lessons/cover.png" --window-size=1175,500 "file:///D:/full/path/lessons/cover.svg"
+   ```
+3. **PNG → JPEG（Python PIL 转换）** — 用 Python 将 PNG 转成 JPEG，去掉透明通道：
+   ```python
+   from PIL import Image
+   img = Image.open('lessons/cover.png')
+   img.convert('RGB').save('lessons/cover.jpg', 'JPEG', quality=95)
+   ```
+4. **更新 HTML** — 将文章中嵌入式 `<svg>` 替换为 `<img src="cover.jpg">` 标签，**并删除原来的笔记本头部信息**（课程笔记标签、主标题、副标题、分隔线、预计时间等），因为封面图已经包含了这些内容，保留会导致重复
+5. 至此 `cover.jpg` 可直接上传到公众号后台作为封面图
+
+注意：**不能使用 SVG 作为图片** — 公众号后台无法识别 SVG 为可上传的图片格式。必须用 Edge headless 这种浏览器级别的截图工具（而非 cairosvg 等库），因为 cairosvg 在 Windows 上依赖 Cairo 系统库，而 Edge 开箱即用。若其他浏览器（Chrome/Chromium）可用，它们的无头截图命令类似。

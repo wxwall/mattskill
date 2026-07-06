@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1175 500">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700;900&amp;display=swap');
+      text { font-family: 'Noto Sans SC', -apple-system, 'PingFang SC', sans-serif; }
+    </style>
+  </defs>
+  <rect width="1175" height="500" fill="#f5f0e8" rx="0"/>
+  <rect x="0" y="0" width="1175" height="4" fill="#8b6914"/>
+  <rect x="40" y="28" width="140" height="26" rx="13" fill="#8b6914" opacity="0.15"/>
+  <text x="110" y="46" text-anchor="middle" fill="#8b6914" font-size="11" font-weight="700">⚡ AI 开发工具</text>
+  <text x="40" y="100" fill="#3d2b1f" font-size="36" font-weight="900">herdr</text>
+  <text x="40" y="140" fill="#8b6914" font-size="18" font-weight="700">终端里的 AI Agent 多路复用器</text>
+  <text x="40" y="172" fill="#6b5a30" font-size="12">让所有编码 Agent 跑在一个终端里，一眼看到谁卡住了、谁在工作、谁搞定了</text>
+  <text x="40" y="196" fill="#8b7355" font-size="11">支持 Claude Code / Codex / Cursor / GitHub Copilot 等 16+ 编码 Agent</text>
+  <line x1="40" y1="218" x2="600" y2="218" stroke="#d4c4a8" stroke-width="1" stroke-dasharray="4,3"/>
+  <rect x="40" y="236" width="170" height="80" rx="10" fill="#f0e8d8" stroke="#d4c4a8" stroke-width="1"/>
+  <text x="125" y="268" text-anchor="middle" fill="#8b6914" font-size="32" font-weight="900">12.2K</text>
+  <text x="125" y="290" text-anchor="middle" fill="#8b7355" font-size="10">⭐ GitHub Stars</text>
+  <text x="125" y="304" text-anchor="middle" fill="#c4a97d" font-size="9">Trending #1</text>
+  <rect x="225" y="236" width="170" height="80" rx="10" fill="#f0e8d8" stroke="#d4c4a8" stroke-width="1"/>
+  <text x="310" y="268" text-anchor="middle" fill="#8b6914" font-size="32" font-weight="900">720</text>
+  <text x="310" y="290" text-anchor="middle" fill="#8b7355" font-size="10">🍴 Forks</text>
+  <text x="310" y="304" text-anchor="middle" fill="#c4a97d" font-size="9">活跃社区</text>
+  <rect x="410" y="236" width="170" height="80" rx="10" fill="#f0e8d8" stroke="#d4c4a8" stroke-width="1"/>
+  <text x="495" y="268" text-anchor="middle" fill="#8b6914" font-size="32" font-weight="900">Rust</text>
+  <text x="495" y="290" text-anchor="middle" fill="#8b7355" font-size="10">🔧 主语言</text>
+  <text x="495" y="304" text-anchor="middle" fill="#c4a97d" font-size="9">单个 ~10MB 二进制</text>
+  <rect x="595" y="236" width="170" height="80" rx="10" fill="#f0e8d8" stroke="#d4c4a8" stroke-width="1"/>
+  <text x="680" y="268" text-anchor="middle" fill="#8b6914" font-size="24" font-weight="900">16+</text>
+  <text x="680" y="290" text-anchor="middle" fill="#8b7355" font-size="10">🤖 支持 Agent</text>
+  <text x="680" y="304" text-anchor="middle" fill="#c4a97d" font-size="9">Claude Code / Codex / Cursor ...</text>
+  <rect x="40" y="336" width="500" height="80" rx="8" fill="#f5f0e3" stroke="#d4c4a8" stroke-width="1"/>
+  <text x="290" y="362" text-anchor="middle" fill="#8b6914" font-size="12" font-weight="700">🌍 社区评价</text>
+  <text x="56" y="384" fill="#5c4033" font-size="11">"A real terminal per agent — even full-screen TUIs render right."</text>
+  <text x="56" y="404" fill="#5c4033" font-size="11">"Nothing dies on detach. Runs anywhere, over SSH. ~10MB binary."</text>
+  <rect x="555" y="336" width="580" height="80" rx="8" fill="#f0e8d8" stroke="#c4b89a" stroke-width="1"/>
+  <text x="845" y="362" text-anchor="middle" fill="#8b6914" font-size="12" font-weight="700">🔑 核心卖点</text>
+  <text x="571" y="384" fill="#5c4033" font-size="11">• Agent 状态一目了然：🔴 阻塞 / 🟡 工作中 / 🔵 已完成 / 🟢 空闲</text>
+  <text x="571" y="404" fill="#5c4033" font-size="11">• 终端原生体验 · 鼠标拖拽分屏 · SSH 远程 · Workspace/Tab/Pane</text>
+  <text x="40" y="460" fill="#c4a97d" font-size="9">🔗 https://github.com/ogulcancelik/herdr · AGPL-3.0 (商用需商业授权)</text>
+  <text x="40" y="478" fill="#c4a97d" font-size="9">2026年3月发布 · v0.7.1 · ogulcancelik/herdr · herdr.dev</text>
+</svg>

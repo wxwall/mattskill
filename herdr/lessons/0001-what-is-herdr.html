@@ -1,0 +1,332 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>跑满 Claude Code + Codex？一个终端全搞定——herdr 12.2K Stars 的开源 Agent 多路复用器</title></head><body style="margin:0;padding:0;background:#f5f0e8;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;color:#4a3728;line-height:1.8;-webkit-text-size-adjust:100%;text-indent:0"><!-- 正文区 --><div style="padding:8px 0">
+
+<!-- 封面图片 -->
+<div style="margin:0 -8px 20px"><img src="cover.jpg" alt="herdr 封面" style="width:100%;display:block;border-radius:4px"></div>
+
+<!-- 导语 -->
+<div style="border-left:3px solid #c4a97d;padding:12px 16px;margin:20px 0;background:rgba(251,247,240,0.6)">
+<div style="text-indent:0;margin:0;font-size:14px;color:#5c4033;line-height:2;font-style:italic">"把 Claude Code、Codex、Cursor 全部扔进同一个终端，每个 Agent 一个独立 pane，谁卡住了谁在摸鱼你一眼看清。合上笔记本不丢进度，换台设备 SSH 连回去接着干。"</div></div>
+
+<!-- 1. 开场 -->
+<div style="margin-bottom:28px">
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+你开了三个 Claude Code 会话重构后端，又跑了两个 Codex 写前端，还有一个 Cursor 在那读代码。你的终端长什么样？
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+大概率是——开了 N 个终端标签页，每个标签页里跑着一个 Agent，翻来翻去找到底哪个跑完了、哪个报错了、哪个卡半天了。偶尔关掉电脑回家，回来发现某个会话中超时断开了，又得重新来一遍。
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+这问题说白了就是——<b>tmux 太老，GUI 又太重</b>。tmux 不支持 Agent 状态感知，你没法一眼看出哪个 pane 里的 Agent 卡了。各种 GUI Agent 管理器呢？大部分是 Mac-only 的闭源应用，把终端塞进一个仿冒窗口里，全屏 TUI 都渲染不对，更别提 SSH 连到服务器上了。
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+六月底有个项目冲上了 GitHub Trending 第一位——<b>herdr</b>，作者 ogulcancelik，一个纯 Rust 写的终端 Agent 多路复用器。一句话概括就是：<b>tmux 的底子 + Agent 感知的大脑，全塞进一个 ~10MB 的二进制文件里</b>。上线不到四个月，12,244 Stars。
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+<div style="flex:1;min-width:130px;background:#f5f0e0;border:1px solid #c4b89a;border-radius:8px;padding:12px;text-align:center">
+<div style="font-family:'Georgia',serif;font-size:22px;font-weight:700;color:#8b6914;line-height:1">12.2K</div>
+<div style="font-size:9px;color:#8b7355;margin-top:4px">GitHub Stars</div>
+</div>
+<div style="flex:1;min-width:130px;background:#f5f0e0;border:1px solid #c4b89a;border-radius:8px;padding:12px;text-align:center">
+<div style="font-family:'Georgia',serif;font-size:22px;font-weight:700;color:#8b6914;line-height:1">720</div>
+<div style="font-size:9px;color:#8b7355;margin-top:4px">Forks</div>
+</div>
+<div style="flex:1;min-width:130px;background:#f5f0e0;border:1px solid #c4b89a;border-radius:8px;padding:12px;text-align:center">
+<div style="font-family:'Georgia',serif;font-size:22px;font-weight:700;color:#8b6914;line-height:1">#1</div>
+<div style="font-size:9px;color:#8b7355;margin-top:4px">GitHub Trending 日榜</div>
+</div>
+<div style="flex:1;min-width:130px;background:#f5f0e0;border:1px solid #c4b89a;border-radius:8px;padding:12px;text-align:center">
+<div style="font-family:'Georgia',serif;font-size:22px;font-weight:700;color:#8b6914;line-height:1">~10MB</div>
+<div style="font-size:9px;color:#8b7355;margin-top:4px">单二进制文件</div>
+</div>
+</div>
+</div>
+
+<!-- 2. 核心功能 -->
+<div style="margin-bottom:28px">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px"><span style="font-family:'Georgia','Noto Serif SC',serif;font-size:22px;font-weight:700;color:#8b6914">01</span><span style="font-size:16px;font-weight:700;color:#3d2b1f">herdr 到底干了件什么事？</span><span style="flex:1;border-bottom:1px dotted #d4c4a8;margin-bottom:3px"></span></div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+你用过 tmux 吧？Session 持久化、分屏 pane、分离/重连——这些好东西 tmux 都有。但它有一个时代局限性：<b>它诞生在 AI Agent 出现之前</b>。tmux 不知道哪个 pane 里跑的是 Agent，不知道 Agent 是卡住了还是在工作，不知道哪个跑完了。
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+herdr 就是在 tmux 的这些功能基础上，长出了专门为 AI Agent 设计的新东西：
+</div>
+
+<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+
+<div style="display:flex;align-items:flex-start;gap:10px;background:#fbf7f0;border:1px solid #e8dcc8;border-radius:8px;padding:12px 14px">
+<div><span style="font-size:18px">🔴</span></div>
+<div><div style="font-size:12px;font-weight:600;color:#3d2b1f">Agent 状态面板——一眼看清所有 Agent 的状态</div>
+<div style="font-size:10px;color:#8b7355;line-height:1.7">侧边栏自动把每个 Agent 标为 🔴 阻塞 / 🟡 工作中 / 🔵 已完成 / 🟢 空闲。零配置，不需要手动写钩子。Claude Code、Codex、Cursor、GitHub Copilot 等 16+ Agent 开箱即识别。</div></div></div>
+
+<div style="display:flex;align-items:flex-start;gap:10px;background:#fbf7f0;border:1px solid #e8dcc8;border-radius:8px;padding:12px 14px">
+<div><span style="font-size:18px">📟</span></div>
+<div><div style="font-size:12px;font-weight:600;color:#3d2b1f">真正的终端，不是仿冒品</div>
+<div style="font-size:10px;color:#8b7355;line-height:1.7">每个 Agent 获得一个真实的终端视图，全屏 TUI 也能完美渲染。不像那些 GUI 管理器把终端塞进一个 app 窗口里。</div></div></div>
+
+<div style="display:flex;align-items:flex-start;gap:10px;background:#fbf7f0;border:1px solid #e8dcc8;border-radius:8px;padding:12px 14px">
+<div><span style="font-size:18px">💤</span></div>
+<div><div style="font-size:12px;font-weight:600;color:#3d2b1f">断线不丢进度，去哪都能连</div>
+<div style="font-size:10px;color:#8b7355;line-height:1.7">后台服务独立运行，关掉笔记本 Agent 继续跑。到家换台电脑 SSH 连回去，或者手机 SSH 上去看一眼进度——一切完好。</div></div></div>
+
+<div style="display:flex;align-items:flex-start;gap:10px;background:#fbf7f0;border:1px solid #e8dcc8;border-radius:8px;padding:12px 14px">
+<div><span style="font-size:18px">🗂️</span></div>
+<div><div style="font-size:12px;font-weight:600;color:#3d2b1f">Workspace / Tab / Pane 随心布局</div>
+<div style="font-size:10px;color:#8b7355;line-height:1.7">按项目或目录组织工作区、标签、分屏。原生支持鼠标拖拽和点击，不用记快捷键也能上手。</div></div></div>
+
+<div style="display:flex;align-items:flex-start;gap:10px;background:#fbf7f0;border:1px solid #e8dcc8;border-radius:8px;padding:12px 14px">
+<div><span style="font-size:18px">🖥️</span></div>
+<div><div style="font-size:12px;font-weight:600;color:#3d2b1f">在哪都能跑</div>
+<div style="font-size:10px;color:#8b7355;line-height:1.7">单个 ~10MB Rust 二进制，Linux 和 macOS 原生支持（Windows beta），零依赖。本机跑、服务器跑、SSH 远程连接，全都可以。</div></div></div>
+
+<div style="display:flex;align-items:flex-start;gap:10px;background:#fbf7f0;border:1px solid #e8dcc8;border-radius:8px;padding:12px 14px">
+<div><span style="font-size:18px">🔌</span></div>
+<div><div style="font-size:12px;font-weight:600;color:#3d2b1f">Agent 也能操作 herdr</div>
+<div style="font-size:10px;color:#8b7355;line-height:1.7">本地 Unix Socket 暴露 API，Agent 可以自己创建 workspace、分屏、启动子 Agent、读取输出、订阅状态变更。这套机制让 Agent 之间互相协作成为可能。</div></div></div>
+
+</div>
+</div>
+
+<!-- 3. 和 tmux / 其他工具对比 -->
+<div style="margin-bottom:28px">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px"><span style="font-family:'Georgia','Noto Serif SC',serif;font-size:22px;font-weight:700;color:#8b6914">02</span><span style="font-size:16px;font-weight:700;color:#3d2b1f">跟 tmux 和 GUI 管理器比，到底强在哪？</span><span style="flex:1;border-bottom:1px dotted #d4c4a8;margin-bottom:3px"></span></div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+项目 README 里有一张对比表，我翻译一下核心结论：
+</div>
+
+<div style="overflow-x:auto;margin-bottom:14px">
+<table style="width:100%;border-collapse:collapse;font-size:10px;background:#fbf7f0;border:1px solid #e8dcc8;border-radius:6px">
+<thead><tr style="background:#f0e8d8">
+<th style="padding:8px 10px;text-align:left;color:#3d2b1f;border-bottom:1px solid #d4c4a8">能力</th>
+<th style="padding:8px 10px;text-align:center;color:#8b7355;border-bottom:1px solid #d4c4a8">tmux</th>
+<th style="padding:8px 10px;text-align:center;color:#8b7355;border-bottom:1px solid #d4c4a8">GUI 管理器</th>
+<th style="padding:8px 10px;text-align:center;color:#8b6914;border-bottom:1px solid #d4c4a8;font-weight:700">herdr</th>
+</tr></thead>
+<tbody>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">持久化 Session</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">—</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">断开/重连</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">—</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">SSH 远程 + 任何终端运行</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">—</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">Pane/Tab/Workspace</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">Agent 状态感知</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">—</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">真正活在终端里</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">—</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">真实终端视图</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">—</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">原生鼠标支持</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">—</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">轻量单二进制</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">✅</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">—</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+<tr><td style="padding:6px 10px;border-bottom:1px solid #ede5d5">Agent 可编程操控</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">❓</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5">❓</td><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #ede5d5;color:#8b6914">✅</td></tr>
+</tbody></table>
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+tmux 的持久化和 pane 功能确实强，但它不识别 Agent。你可以自己写钩子靠 bell 字符来判断，但每个 Agent 都得单独配，而且没有统一的全局面板来鸟瞰所有 Agent 的状态。GUI 管理器（像 Conductor、cmux、emdash）能看 Agent 状态，但它们本质上是 app——Mac-only、闭源，把终端画在窗口里而不是真正的终端。herdr 把两者的优点结合了：tmux 的轻量和持久化 + Agent 感知。
+</div>
+
+<div style="background:#f5f0e3;border:1px solid #d4c8b0;border-radius:2px 8px 8px 2px;padding:14px;position:relative">
+<div style="position:absolute;top:-1px;left:-1px;bottom:-1px;width:4px;background:#b8956a;border-radius:2px 0 0 2px"></div>
+<div style="font-size:11px;font-weight:700;color:#8b6914;margin-bottom:4px">💡 一句话总结</div>
+<div style="font-size:11px;color:#5c4033;line-height:1.8">tmux 给你持久化但是不认 Agent，GUI 管理器认 Agent 但是不够终端原生。herdr = tmux 的底子 + Agent 感知的大脑。</div>
+</div>
+</div>
+
+<!-- 4. 安装和上手 -->
+<div style="margin-bottom:28px">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px"><span style="font-family:'Georgia','Noto Serif SC',serif;font-size:22px;font-weight:700;color:#8b6914">03</span><span style="font-size:16px;font-weight:700;color:#3d2b1f">安装和快速上手</span><span style="flex:1;border-bottom:1px dotted #d4c4a8;margin-bottom:3px"></span></div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+安装就一条命令，支持 macOS、Linux 和 Windows（beta）：
+</div>
+
+<div style="background:#3d2b1f;color:#e8dcc8;padding:14px 16px;border-radius:6px;font-family:'SF Mono',Menlo,monospace;font-size:11px;line-height:1.8;margin-bottom:12px">
+# macOS / Linux<br>
+curl -fsSL https://herdr.dev/install.sh | sh<br><br>
+# Windows PowerShell（预览）<br>
+powershell -ExecutionPolicy Bypass -c "irm https://herdr.dev/install.ps1 | iex"
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+也可以用 Homebrew 或 mise 安装：
+</div>
+
+<div style="background:#3d2b1f;color:#e8dcc8;padding:14px 16px;border-radius:6px;font-family:'SF Mono',Menlo,monospace;font-size:11px;line-height:1.8;margin-bottom:12px">
+brew install herdr<br>
+# 或者<br>
+mise use -g herdr
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+装完直接跑：
+</div>
+
+<div style="background:#3d2b1f;color:#e8dcc8;padding:14px 16px;border-radius:6px;font-family:'SF Mono',Menlo,monospace;font-size:11px;line-height:1.8;margin-bottom:12px">
+herdr
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+它会启动或连接到一个后台服务，然后打开一个 workspace。一个 pane 里跑一个 Agent，鼠标可以直接拖拽分隔线、点击标签、分屏 p>
+
+<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+<div style="display:flex;align-items:flex-start;gap:10px;background:#fbf7f0;border:1px solid #e8dcc8;border-radius:8px;padding:12px 14px">
+<div><span style="font-size:16px">⌨️</span></div>
+<div><div style="font-size:12px;font-weight:600;color:#3d2b1f">关键快捷键</div>
+<div style="font-size:10px;color:#8b7355;line-height:1.8">ctrl+b 是前缀键，按完松开再按动作键：<br>
+<b>c</b> — 新建标签 · <b>v</b> 或 <b>-</b> — 分屏 · <b>shift+n</b> — 新建 workspace<br>
+<b>w</b> — 切换 workspace · <b>q</b> — 断开（Agent 继续跑）<br>
+<b>?</b> — 查看全部快捷键</div></div></div>
+</div>
+
+<div style="background:#f5f0e3;border:1px solid #d4c8b0;border-radius:2px 8px 8px 2px;padding:14px;margin-bottom:14px;position:relative">
+<div style="position:absolute;top:-1px;left:-1px;bottom:-1px;width:4px;background:#b8956a;border-radius:2px 0 0 2px"></div>
+<div style="font-size:11px;font-weight:700;color:#8b6914;margin-bottom:4px">⚠️ 新手提示</div>
+<div style="font-size:11px;color:#5c4033;line-height:1.8">
+• herdr 只留了一个保留键 <b>ctrl+b</b>，不影响你终端里其他快捷键的使用<br>
+• 断开后 Agent 不会停——<b>herdr q</b> 断开，用 <b>herdr</b> 重新连回去<br>
+• 想从本地连远程服务器上的 herdr：<b>herdr --remote workbox</b> 或 <b>herdr --remote ssh://you@server:2222</b><br>
+• 图片粘贴等功能在远程模式下仍然可用，不会像纯 SSH+tmux 那样断掉
+</div>
+</div>
+</div>
+
+<!-- 5. 远程使用 -->
+<div style="margin-bottom:28px">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px"><span style="font-family:'Georgia','Noto Serif SC',serif;font-size:22px;font-weight:700;color:#8b6914">04</span><span style="font-size:16px;font-weight:700;color:#3d2b1f">远程模式——最让我眼前一亮的功能</span><span style="flex:1;border-bottom:1px dotted #d4c4a8;margin-bottom:3px"></span></div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+herdr 的远程模式解决了一个真实痛点——你在本地 SSH 到远程服务器跑 tmux，图片粘贴、文件拖拽这些就废了。herdr 的 <b>--remote</b> 模式下，<b>本地终端是客户端，远程 herdr 是服务端</b>，图片粘贴这类操作走的是 herdr 协议而不是 SSH，所以功能不受影响。
+</div>
+
+<div style="background:#3d2b1f;color:#e8dcc8;padding:14px 16px;border-radius:6px;font-family:'SF Mono',Menlo,monospace;font-size:11px;line-height:1.8;margin-bottom:12px">
+# VPS 上跑 herdr，本地当客户端<br>
+herdr --remote ssh://you@yourserver:2222
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+搭配持久化 session，你在家合上电脑，到公司 SSH 连上服务器，herdr 重连，一切照旧。
+</div>
+</div>
+
+<!-- 6. Agent 生态 -->
+<div style="margin-bottom:28px">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px"><span style="font-family:'Georgia','Noto Serif SC',serif;font-size:22px;font-weight:700;color:#8b6914">05</span><span style="font-size:16px;font-weight:700;color:#3d2b1f">Agent 也能用 herdr——最有想象力的部分</span><span style="flex:1;border-bottom:1px dotted #d4c4a8;margin-bottom:3px"></span></div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+herdr 暴露了一个本地 Unix Socket API。意思是——<b>Agent 可以自己调用 herdr 的 API 来创建 workspace、分屏、启动子 Agent、读输出</b>。
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+装一个 Agent 的官方集成：
+</div>
+
+<div style="background:#3d2b1f;color:#e8dcc8;padding:14px 16px;border-radius:6px;font-family:'SF Mono',Menlo,monospace;font-size:11px;line-height:1.8;margin-bottom:12px">
+herdr integration install claude<br>
+herdr integration install codex<br>
+herdr integration install copilot
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+这些集成让 Agent 感知 herdr 的 session 状态，甚至能在需要时自己分屏、创建新 workspace。想把 herdr 能力直接暴露给 Claude Code，还能装官方 skill：
+</div>
+
+<div style="background:#3d2b1f;color:#e8dcc8;padding:14px 16px;border-radius:6px;font-family:'SF Mono',Menlo,monospace;font-size:11px;line-height:1.8;margin-bottom:12px">
+npx skills add ogulcancelik/herdr --skill herdr -g
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+目前支持状态识别的 Agent 列表：Claude Code、Codex、Cursor、GitHub Copilot、Devin CLI、Droid、Amp、OpenCode、Grok CLI 等 16+。完整清单和服务端集成说明可以看 <a href="https://herdr.dev/docs/integrations/" style="color:#8b6914;text-decoration:none;border-bottom:1px dotted #c4a97d">官方文档</a>。
+</div>
+</div>
+
+<!-- 7. 协议和社区 -->
+<div style="margin-bottom:28px">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px"><span style="font-family:'Georgia','Noto Serif SC',serif;font-size:22px;font-weight:700;color:#8b6914">📜</span><span style="font-size:16px;font-weight:700;color:#3d2b1f">开源协议</span><span style="flex:1;border-bottom:1px dotted #d4c4a8;margin-bottom:3px"></span></div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+herdr 采用 <b>AGPL-3.0</b> 双许可证模式。个人使用、社区贡献完全开源免费。如果企业无法遵守 AGPL 的要求，可以联系作者（hey@herdr.dev）获取商业授权。
+</div>
+
+<div style="text-indent:0;margin:0 0 12px;font-size:13px;color:#5c4033;line-height:1.9">
+作者全职在做这个项目，目前没有收入来源。GitHub Sponsors 直接支持开发——如果你觉得项目有用，去点个 Star 或者赞助一杯咖啡都是支持。
+</div>
+
+<div style="background:#f5f0e3;border:1px solid #d4c8b0;border-radius:8px;padding:14px;margin-bottom:12px;text-align:center">
+<div style="font-size:12px;color:#5c4033;line-height:1.9">"run all your coding agents in one terminal.<br>see who's blocked, working, or done at a glance."</div>
+</div>
+</div>
+
+<!-- 测验 -->
+<div style="margin-bottom:20px">
+<div style="text-align:center;margin-bottom:16px"><span style="font-size:24px">📝</span><div style="font-size:16px;font-weight:700;color:#3d2b1f;margin-top:2px">小测验</div><div style="width:24px;height:2px;background:#c4a97d;margin:6px auto 0"></div></div>
+
+<div style="margin-bottom:18px">
+<div style="font-size:13px;font-weight:600;color:#3d2b1f;margin-bottom:10px;line-height:1.6">Q1：herdr 跟 tmux 最大的区别是什么？</div>
+<div style="font-size:10px;color:#c4a97d;margin-bottom:8px">👆 点击每个选项查看对错</div>
+
+<svg style="display:block;width:100%;height:52px;margin-bottom:5px" viewBox="0 0 350 52" role="img">
+<g><rect width="350" height="44" rx="6" fill="#fbf7f0" stroke="#e8dcc8" stroke-width="1"/><text x="12" y="27" fill="#8b7355" font-size="13"><tspan leaf="">A. tmux 不支持持久化 session，herdr 支持</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="0" dur="0.01s" fill="freeze"/></g>
+<g opacity="0"><rect width="350" height="44" rx="6" fill="#faf5f0" stroke="#d4bfb0" stroke-width="1"/><text x="12" y="27" fill="#7d5f52" font-size="13" font-weight="bold"><tspan leaf="">✗ A. 不对。tmux 也有持久化 session，区别在于 Agent 感知。</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="1" dur="0.01s" fill="freeze"/></g>
+</svg>
+
+<svg style="display:block;width:100%;height:52px;margin-bottom:5px" viewBox="0 0 350 52" role="img">
+<g><rect width="350" height="44" rx="6" fill="#fbf7f0" stroke="#e8dcc8" stroke-width="1"/><text x="12" y="27" fill="#8b7355" font-size="13"><tspan leaf="">B. herdr 能识别 Agent 状态，tmux 不能</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="0" dur="0.01s" fill="freeze"/></g>
+<g opacity="0"><rect width="350" height="44" rx="6" fill="#f5f0e0" stroke="#c4b89a" stroke-width="1"/><text x="12" y="27" fill="#6b5a30" font-size="13" font-weight="bold"><tspan leaf="">✓ B. 正确！herdr 自动识别 Agent 状态，tmux 是 blind 的。</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="1" dur="0.01s" fill="freeze"/></g>
+</svg>
+
+<svg style="display:block;width:100%;height:52px;margin-bottom:5px" viewBox="0 0 350 52" role="img">
+<g><rect width="350" height="44" rx="6" fill="#fbf7f0" stroke="#e8dcc8" stroke-width="1"/><text x="12" y="27" fill="#8b7355" font-size="13"><tspan leaf="">C. herdr 是 GUI 应用，tmux 是终端工具</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="0" dur="0.01s" fill="freeze"/></g>
+<g opacity="0"><rect width="350" height="44" rx="6" fill="#faf5f0" stroke="#d4bfb0" stroke-width="1"/><text x="12" y="27" fill="#7d5f52" font-size="13" font-weight="bold"><tspan leaf="">✗ C. 不对。herdr 也是终端工具，不是 GUI 应用。</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="1" dur="0.01s" fill="freeze"/></g>
+</svg>
+
+<svg style="display:block;width:100%;height:52px;margin-bottom:5px" viewBox="0 0 350 52" role="img">
+<g><rect width="350" height="44" rx="6" fill="#fbf7f0" stroke="#e8dcc8" stroke-width="1"/><text x="12" y="27" fill="#8b7355" font-size="13"><tspan leaf="">D. herdr 只支持 Claude Code</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="0" dur="0.01s" fill="freeze"/></g>
+<g opacity="0"><rect width="350" height="44" rx="6" fill="#faf5f0" stroke="#d4bfb0" stroke-width="1"/><text x="12" y="27" fill="#7d5f52" font-size="13" font-weight="bold"><tspan leaf="">✗ D. 不对。支持 16+ Agent，包括 Codex/Cursor/Copilot 等。</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="1" dur="0.01s" fill="freeze"/></g>
+</svg>
+</div>
+
+<div>
+<div style="font-size:13px;font-weight:600;color:#3d2b1f;margin-bottom:10px;line-height:1.6">Q2：herdr 的远程模式解决了什么痛点？</div>
+<div style="font-size:10px;color:#c4a97d;margin-bottom:8px">👆 点击每个选项查看对错</div>
+
+<svg style="display:block;width:100%;height:52px;margin-bottom:5px" viewBox="0 0 350 52" role="img">
+<g><rect width="350" height="44" rx="6" fill="#fbf7f0" stroke="#e8dcc8" stroke-width="1"/><text x="12" y="27" fill="#8b7355" font-size="13"><tspan leaf="">A. SSH 无法远程连接</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="0" dur="0.01s" fill="freeze"/></g>
+<g opacity="0"><rect width="350" height="44" rx="6" fill="#faf5f0" stroke="#d4bfb0" stroke-width="1"/><text x="12" y="27" fill="#7d5f52" font-size="13" font-weight="bold"><tspan leaf="">✗ A. 不对。SSH 可以连接，但图片粘贴等功能受限。</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="1" dur="0.01s" fill="freeze"/></g>
+</svg>
+
+<svg style="display:block;width:100%;height:52px;margin-bottom:5px" viewBox="0 0 350 52" role="img">
+<g><rect width="350" height="44" rx="6" fill="#fbf7f0" stroke="#e8dcc8" stroke-width="1"/><text x="12" y="27" fill="#8b7355" font-size="13"><tspan leaf="">B. 远程模式下图片粘贴、文件拖拽仍然可用</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="0" dur="0.01s" fill="freeze"/></g>
+<g opacity="0"><rect width="350" height="44" rx="6" fill="#f5f0e0" stroke="#c4b89a" stroke-width="1"/><text x="12" y="27" fill="#6b5a30" font-size="13" font-weight="bold"><tspan leaf="">✓ B. 正确！本地终端作客户端，走 herdr 协议，功能不受限。</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="1" dur="0.01s" fill="freeze"/></g>
+</svg>
+
+<svg style="display:block;width:100%;height:52px;margin-bottom:5px" viewBox="0 0 350 52" role="img">
+<g><rect width="350" height="44" rx="6" fill="#fbf7f0" stroke="#e8dcc8" stroke-width="1"/><text x="12" y="27" fill="#8b7355" font-size="13"><tspan leaf="">C. 远程模式只能在手机上用</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="0" dur="0.01s" fill="freeze"/></g>
+<g opacity="0"><rect width="350" height="44" rx="6" fill="#faf5f0" stroke="#d4bfb0" stroke-width="1"/><text x="12" y="27" fill="#7d5f52" font-size="13" font-weight="bold"><tspan leaf="">✗ C. 不对。任何能 SSH 的设备都可以。</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="1" dur="0.01s" fill="freeze"/></g>
+</svg>
+
+<svg style="display:block;width:100%;height:52px;margin-bottom:5px" viewBox="0 0 350 52" role="img">
+<g><rect width="350" height="44" rx="6" fill="#fbf7f0" stroke="#e8dcc8" stroke-width="1"/><text x="12" y="27" fill="#8b7355" font-size="13"><tspan leaf="">D. 远程模式不支持鼠标操作</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="0" dur="0.01s" fill="freeze"/></g>
+<g opacity="0"><rect width="350" height="44" rx="6" fill="#faf5f0" stroke="#d4bfb0" stroke-width="1"/><text x="12" y="27" fill="#7d5f52" font-size="13" font-weight="bold"><tspan leaf="">✗ D. 不对。herdr 原生支持鼠标拖拽操作。</tspan></text><animate attributeName="opacity" begin="click" restart="never" to="1" dur="0.01s" fill="freeze"/></g>
+</svg>
+</div>
+</div>
+
+<!-- 结语 -->
+<div style="text-align:center;padding:24px 0 8px">
+<div style="font-size:14px;font-weight:700;color:#3d2b1f;margin-bottom:8px">写在最后</div>
+<div style="text-indent:0;margin:0 auto;font-size:12px;color:#5c4033;line-height:1.9;max-width:400px">
+herdr 做的不是惊天动地的大事——它只是把"管理多个 Agent"这件事做对了。一个终端搞定所有 Agent，状态一目了然，断开不丢，去哪儿都能连。
+</div>
+<div style="text-indent:0;margin:12px auto 0;font-size:12px;color:#5c4033;line-height:1.9;max-width:400px">
+对每天跟多个 Agent 打交道的开发者来说，这玩意儿值得试一试。反正装一下也就一条命令的事。
+</div>
+</div>
+
+<div style="text-align:center;padding:0 0 24px">
+<div style="font-size:9px;color:#c4a97d">🔗 项目地址：https://github.com/ogulcancelik/herdr</div>
+<div style="font-size:9px;color:#c4a97d;margin-top:4px">🌐 官网：https://herdr.dev</div>
+<div style="font-size:9px;color:#c4a97d;margin-top:4px">📦 安装：curl -fsSL https://herdr.dev/install.sh | sh</div>
+</div>
+
+</div></body></html>
