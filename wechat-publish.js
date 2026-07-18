@@ -63,7 +63,7 @@ if (start !== -1) {
 const contentFile = path.join(path.dirname(absPath), '.wechat-temp-content.html');
 fs.writeFileSync(contentFile, content, 'utf-8');
 
-const publishScript = 'D:/projects/claude/teach/wechat-scripts/publish.js';
+const publishScript = path.join(__dirname, 'wechat-scripts', 'publish.js');
 if (!fs.existsSync(publishScript)) {
   console.error('发布脚本不存在:', publishScript);
   fs.unlinkSync(contentFile);
